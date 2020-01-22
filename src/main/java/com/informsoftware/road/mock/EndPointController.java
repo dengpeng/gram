@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class EndPointController {
 
   EndPointService endPointService;
-  
+
   @Autowired
   public void setEndPointService (EndPointService endPointService) {
     this.endPointService = endPointService;
@@ -36,7 +36,7 @@ public class EndPointController {
     return endPointService.getAll ();
   }
 
-  @GetMapping("/{id}")
+  @GetMapping ("/{id}")
   public ResponseEntity<EndPoint> getConfigById (@PathVariable String id) {
     return ResponseEntity.of (endPointService.getById (id));
   }
@@ -44,17 +44,17 @@ public class EndPointController {
   @PostMapping
   public ResponseEntity<EndPoint> createConfig (EndPoint data,
                                                 UriComponentsBuilder ucb) {
-    if (StringUtils.isEmpty (data.getUri ())) {
+    if (StringUtils.isEmpty (data.getPath ())) {
       return ResponseEntity.badRequest ().build ();
     }
 
-    EndPoint created = endPointService.add(data);
+    EndPoint created = endPointService.add (data);
 
     if (created != null) {
       UriComponents uc = ucb.path ("/config/{id}").buildAndExpand (created.getId ());
-      return ResponseEntity.created(uc.toUri()).body(created);
+      return ResponseEntity.created (uc.toUri ()).body (created);
     } else {
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.badRequest ().build ();
     }
   }
 
@@ -62,13 +62,13 @@ public class EndPointController {
   public ResponseEntity<EndPoint> updateConfig (EndPoint data) {
     Optional<EndPoint> updated = endPointService.update (data);
 
-    return ResponseEntity.of(updated);
+    return ResponseEntity.of (updated);
   }
 
   @DeleteMapping
   public ResponseEntity<EndPoint> removeConfig (@RequestParam String id) {
     endPointService.remove (id);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok ().build ();
   }
 
 }

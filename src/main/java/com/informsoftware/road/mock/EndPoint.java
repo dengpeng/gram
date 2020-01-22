@@ -16,24 +16,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 public class EndPoint {
 
-  static final Logger log = LoggerFactory.getLogger(EndPoint.class);
+  static final Logger   log = LoggerFactory.getLogger (EndPoint.class);
 
-  private String id;
-  private boolean active;
+  private String        id;
+  private boolean       active;
 
-  private String uri;
-  private String response;
-  private HttpStatus status;
+  private String        path;
+  private String        response;
+  private HttpStatus    status;
   private RequestMethod method;
-  private MediaType mediaType;
+  private MediaType     mediaType;
+  private Long          delay;                                         // millisecond
 
   public EndPoint () {
-    this.id = UUID.randomUUID().toString();
+    this.id = UUID.randomUUID ().toString ();
   }
 
-  public EndPoint (String uri, String response, HttpStatus status) {
+  public EndPoint (String path,
+                   String response,
+                   HttpStatus status) {
     this ();
-    this.uri = uri;
+    this.path = path;
     this.response = response;
 
     if (status != null) {
@@ -41,91 +44,116 @@ public class EndPoint {
     }
   }
 
-  public EndPoint (String uri, String response, HttpStatus status, MediaType mediaType) {
-    this (uri, response, status);
+  public EndPoint (String path,
+                   String response,
+                   HttpStatus status,
+                   MediaType mediaType) {
+    this (path, response, status);
 
     if (mediaType != null) {
       this.mediaType = mediaType;
     }
   }
 
-  public EndPoint (String uri, String response, HttpStatus status, RequestMethod method) {
-    this (uri, response, status);
+  public EndPoint (String path,
+                   String response,
+                   HttpStatus status,
+                   RequestMethod method) {
+    this (path, response, status);
 
     if (method != null) {
       this.method = method;
     }
   }
 
-  public EndPoint (String uri, String response, HttpStatus status, RequestMethod method,  MediaType mediaType) {
-    this (uri, response, status, method);
+  public EndPoint (String path,
+                   String response,
+                   HttpStatus status,
+                   RequestMethod method,
+                   MediaType mediaType) {
+    this (path, response, status, method);
 
     if (method != null) {
       this.method = method;
     }
-  }  
-
-  public String getUri() {
-    return uri;
   }
 
-  public void setUri(String uri) {
-    if (!StringUtils.isEmpty(uri)) {
-      this.uri = uri;
+  public EndPoint (String path,
+                   String response,
+                   HttpStatus status,
+                   RequestMethod method,
+                   MediaType mediaType,
+                   Long delay) {
+    this (path, response, status, method, mediaType);
+
+    if (delay != null) {
+      this.delay = delay;
+    } else {
+      delay = 0L;
     }
   }
 
-  public String getResponse() {
+  public String getPath () {
+    return path;
+  }
+
+  public void setPath (String path) {
+    if (!StringUtils.isEmpty (path)) {
+      this.path = path;
+    }
+  }
+
+  public String getResponse () {
     return response;
   }
 
-  public void setResponse(String response) {
+  public void setResponse (String response) {
     if (response != null) {
       this.response = response;
     }
   }
 
-  public HttpStatus getStatus() {
+  public HttpStatus getStatus () {
     return status;
   }
 
-  public void setStatus(HttpStatus status) {
+  public void setStatus (HttpStatus status) {
     if (status != null) {
       this.status = status;
     }
   }
 
   public String getContentType () {
-    return mediaType == null ? "" : mediaType.toString();
+    return mediaType == null ? "" : mediaType.toString ();
   }
 
   public void setContentType (String contentType) {
     MediaType mediaType = null;
-    
+
     try {
-      mediaType = MediaType.parseMediaType(contentType);
+      mediaType = MediaType.parseMediaType (contentType);
     } catch (IllegalArgumentException e) {
-      log.error("Cannot parse content type", e);
+      log.error ("Cannot parse content type", e);
     }
 
     if (mediaType != null) {
-      setMediaType(mediaType);
+      setMediaType (mediaType);
     }
   }
 
-  public String getId() {
+  public String getId () {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId (String id) {
     this.id = id;
   }
 
-  public boolean isActive() {
+  public boolean isActive () {
     return active;
   }
 
-  public void setActive(boolean active) {
+  public void setActive (boolean active) {
     this.active = active;
   }
 
@@ -148,6 +176,14 @@ public class EndPoint {
     if (method != null) {
       this.method = method;
     }
+  }
+
+  public Long getDelay () {
+    return delay;
+  }
+
+  public void setDelay (Long delay) {
+    this.delay = delay;
   }
 
 }

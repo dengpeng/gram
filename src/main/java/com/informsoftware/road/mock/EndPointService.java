@@ -31,14 +31,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Service
 public class EndPointService {
 
-  static final Logger log = LoggerFactory.getLogger(EndPointService.class);
+  static final Logger   log         = LoggerFactory.getLogger (EndPointService.class);
 
   Map<String, EndPoint> endPointMap = new ConcurrentHashMap<> ();
   File                  dataFile;
-  ObjectMapper objectMapper;
+  ObjectMapper          objectMapper;
 
   @Autowired
-  public EndPointService (ApplicationArguments args, ObjectMapper objectMapper) {
+  public EndPointService (ApplicationArguments args,
+                          ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;
 
     List<String> dataFiles = args.getOptionValues ("data");
@@ -47,47 +48,53 @@ public class EndPointService {
       dataFileName = dataFiles.get (0);
     }
 
-    ApplicationHome home = new ApplicationHome(this.getClass());
+    ApplicationHome home = new ApplicationHome (this.getClass ());
 
-    dataFile = new File(home.getDir(), dataFileName);
+    dataFile = new File (home.getDir (), dataFileName);
   }
 
   @PostConstruct
   protected void loadDataFromFile () {
-    if (dataFile != null && dataFile.exists()) {
+    if (dataFile != null && dataFile.exists ()) {
       try {
-        log.info("Loading data from file " + dataFile.getName());
-        List<EndPoint> data = objectMapper.readValue(dataFile, new TypeReference<List<EndPoint>>() {
+        log.info ("Loading data from file " + dataFile.getName ());
+        List<EndPoint> data = objectMapper.readValue (dataFile, new TypeReference<List<EndPoint>> () {
         });
-        data.stream().forEach(item -> add(item));
-        log.info(String.format("%d data items loaded.", data.size()));
+        data.stream ().forEach (item -> add (item));
+        log.info (String.format ("%d data items loaded.", data.size ()));
 
       } catch (JsonParseException | JsonMappingException e) {
-        log.error ("Fail to parse JSON data from file " + dataFile.getName(), e);
-      
+        log.error ("Fail to parse JSON data from file " + dataFile.getName (), e);
+
       } catch (IOException e) {
-        log.error ("Fail to load data from file " + dataFile.getName(), e);
+        log.error ("Fail to load data from file " + dataFile.getName (), e);
       }
     } else {
-      log.warn ("Data file " + dataFile.getName() + " doesn't exist. No data loaded");
+      log.warn ("Data file " + dataFile.getName () + " doesn't exist. No data loaded");
     }
   }
 
   public EndPoint add (EndPoint data) {
-    if (data.getMediaType() == null) {
-      data.setMediaType(MediaType.APPLICATION_JSON);
+    if (data.getMediaType () == null) {
+      data.setMediaType (MediaType.APPLICATION_JSON);
     }
 
-    if (data.getMethod() == null) {
-      data.setMethod(RequestMethod.GET);
+    if (data.getMethod () == null) {
+      data.setMethod (RequestMethod.GET);
     }
 
-    if (data.getStatus() == null) {
-      data.setStatus(HttpStatus.OK);
+    if (data.getStatus () == null) {
+      data.setStatus (HttpStatus.OK);
     }
 
-    if (!getActiveByUriAndMethod(data.getUri(), data.getMethod()).isPresent()) {
-      data.setActive(true);
+    if (data.getDelay () == null) {
+      data.setDelay (0L);
+    }
+
+    if (!getActiveByPathAndMethod (data.getPath (), data.getMethod ()).isPresent ()) {
+      data.setActive (true);
+    } else {
+      data.setActive (false);
     }
 
     endPointMap.put (data.getId (), data);
@@ -95,54 +102,82 @@ public class EndPointService {
     return data;
   }
 
-  public EndPoint create(String uri, String response, HttpStatus status, RequestMethod method, MediaType mediaType) {
-    EndPoint newItem = new EndPoint(uri, response, status, method, mediaType);
-  
-    return add(newItem);
+  public EndPoint create (String path,
+                          String response,
+                          HttpStatus status,
+                          RequestMethod method,
+                          MediaType mediaType,
+                          Long delay) {
+    EndPoint newItem = new EndPoint (path, response, status, method, mediaType, delay);
+
+    return add (newItem);
   }
 
   public Optional<EndPoint> update (EndPoint data) {
-    return update (data.getId(), data.getUri(), data.getResponse(), data.getStatus(), data.getMethod(), data.getMediaType(), data.isActive());
+    return update (data.getId (),
+                   data.getPath (),
+                   data.getResponse (),
+                   data.getStatus (),
+                   data.getMethod (),
+                   data.getMediaType (),
+                   data.getDelay (),
+                   data.isActive ());
   }
 
-  public Optional<EndPoint> update (String id, String uri, String response, HttpStatus status, RequestMethod method, MediaType mediaType, boolean active) {
+  public Optional<EndPoint> update (String id,
+                                    String path,
+                                    String response,
+                                    HttpStatus status,
+                                    RequestMethod method,
+                                    MediaType mediaType,
+                                    Long delay,
+                                    boolean active) {
     Optional<EndPoint> endPoint = getById (id);
 
-    endPoint.ifPresent(item -> {
-      item.setUri(uri);
-      item.setResponse(response);
-      item.setStatus(status);
-      item.setMethod(method);
-      item.setMediaType(mediaType);
+    endPoint.ifPresent (item -> {
+      item.setPath (path);
+      item.setResponse (response);
+      item.setStatus (status);
+      item.setMethod (method);
+      item.setMediaType (mediaType);
+      item.setDelay (delay);
 
-      if (active && !item.isActive()) {
-        getActiveByUri(item.getUri()).ifPresent(other -> {
-          other.setActive(false);
+      if (active && !item.isActive ()) {
+        getActiveByPath (item.getPath ()).ifPresent (other -> {
+          other.setActive (false);
         });
-        item.setActive(active);
+        item.setActive (active);
       }
     });
 
-    return endPoint; 
+    return endPoint;
   }
 
   public void remove (String id) {
-    endPointMap.remove(id);
+    endPointMap.remove (id);
   }
 
   public List<EndPoint> getAll () {
-    return new ArrayList<>(endPointMap.values());
+    return new ArrayList<> (endPointMap.values ());
   }
 
   public Optional<EndPoint> getById (String id) {
-    return Optional.ofNullable(endPointMap.get(id));
+    return Optional.ofNullable (endPointMap.get (id));
   }
 
-  public Optional<EndPoint> getActiveByUri (String uri) {
-    return endPointMap.values().stream().filter(e -> uri != null && uri.equals(e.getUri()) && e.isActive()).findFirst();
+  public Optional<EndPoint> getActiveByPath (String path) {
+    return endPointMap.values ()
+                      .stream ()
+                      .filter (e -> path != null && path.equals (e.getPath ()) && e.isActive ())
+                      .findFirst ();
   }
 
-  public Optional<EndPoint> getActiveByUriAndMethod (String uri, RequestMethod method) {
-    return endPointMap.values().stream().filter(e -> e.isActive() && uri != null && uri.equals(e.getUri()) && method != null && method.equals(e.getMethod())).findFirst();
+  public Optional<EndPoint> getActiveByPathAndMethod (String path,
+                                                      RequestMethod method) {
+    return endPointMap.values ()
+                      .stream ()
+                      .filter (e -> e.isActive () && path != null && path.equals (e.getPath ()) && method != null
+                          && method.equals (e.getMethod ()))
+                      .findFirst ();
   }
 }
