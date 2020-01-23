@@ -31,7 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Service
 public class EndPointService {
 
-  static final Logger   log         = LoggerFactory.getLogger (EndPointService.class);
+  static final Logger   log               = LoggerFactory.getLogger (EndPointService.class);
+  static final String   DEFAULT_DATA_FILE = "data.json";
 
   Map<String, EndPoint> endPointMap = new ConcurrentHashMap<> ();
   File                  dataFile;
@@ -43,7 +44,7 @@ public class EndPointService {
     this.objectMapper = objectMapper;
 
     List<String> dataFiles = args.getOptionValues ("data");
-    String dataFileName = "config.json";
+    String dataFileName = DEFAULT_DATA_FILE;
     if (dataFiles != null && dataFiles.size () > 0) {
       dataFileName = dataFiles.get (0);
     }

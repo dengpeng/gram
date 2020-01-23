@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +35,15 @@ public class EndPointController {
   @GetMapping
   public List<EndPoint> getAll () {
     return endPointService.getAll ();
+  }
+
+  @GetMapping(params = "download")
+  public ResponseEntity<List<EndPoint>> downloadAll () {
+    List<EndPoint> data = endPointService.getAll ();
+
+    return ResponseEntity.ok()
+                         .header ("Content-Disposition", "attachment; filename=\"data.json\"")
+                         .body (data);
   }
 
   @PostMapping
