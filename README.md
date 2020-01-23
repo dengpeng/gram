@@ -1,12 +1,12 @@
-# Generic Mock API Server
+# GRAMS: A Generic REST-API Mock Server 
 
 ## Description
 
-This is a simple web server which enables defining of flexible API end points using a RESTful interface at `/config` or using an integrated web app (WIP).
+GRAMS is a simple web server which enables defining of mock API end points flexibly using a RESTful interface at `/config` or using an integrated web app (WIP).
 
-The defined API end points will be accessible at the same server under the sub-path `/mock/`.
+The defined mock API end points can be accessed at the same server under the sub-path `/mock/`.
 
-The server does not have backend persistence (yet), which means all configurations get lost upon server shutdown. However the server supports loading data from a configuration file (in JSON format) during start-up. The file can be specified using command line parameter `--data`, or simply be named "`config.json`" and put together with the server jar file.
+The server does not have backend persistence (yet), which means all configurations get lost upon server shutdown. However the server supports loading data from a JSON configuration file during start-up. The file can be specified using command line parameter `--data`, or simply be named "`data.json`" and put together with the server jar file.
 
 ## End Point Definition
 
@@ -84,3 +84,38 @@ Following aspects of an end point can be defined:
 * `--data=data.json`
 
   Server by default starts with no end point definition. If a file named `data.json` exists in the same directory the JAR file is executed, or any file specified using `--data`, server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config?download`)
+
+## Development
+
+### Requirements
+
+* Server
+  * OpenJDK 8+
+  * Maven
+* Web-App
+  * node/npm
+
+### Dependencies
+
+* Java
+  - Spring-Boot
+* JavaScript
+  - react-js
+  - redux-toolkit / react-redux
+  - axios
+  - material-ui
+
+## Build
+
+    mvn package
+
+## Dev-Server
+
+* Backend (available at http://localhost:9000)
+
+      mvn spring-boot:run
+
+* Frontend (available at http://localhost:3000)
+
+      cd src/main/javascript
+      npm start
