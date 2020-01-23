@@ -3,8 +3,9 @@ package com.informsoftware.road.mock;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,10 +27,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class EndPointController {
 
   EndPointService endPointService;
+  ObjectMapper objectMapper;
 
   @Autowired
-  public void setEndPointService (EndPointService endPointService) {
+  public void setEndPointService (EndPointService endPointService, ObjectMapper objectMapper) {
     this.endPointService = endPointService;
+    this.objectMapper = objectMapper;
   }
 
   @GetMapping
@@ -38,12 +41,20 @@ public class EndPointController {
   }
 
   @GetMapping(params = "download")
-  public ResponseEntity<List<EndPoint>> downloadAll () {
+  public ResponseEntity<String> downloadAll () {
     List<EndPoint> data = endPointService.getAll ();
+
+    String json = "";
+    
+    try {
+      json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(data);
+    } catch (Exception e) {
+      return ResponseEntity.unprocessableEntity().body(e.getMessage());
+    }
 
     return ResponseEntity.ok()
                          .header ("Content-Disposition", "attachment; filename=\"data.json\"")
-                         .body (data);
+                         .body (json);
   }
 
   @PostMapping
