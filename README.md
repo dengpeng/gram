@@ -28,9 +28,13 @@ Following aspects of an end point can be defined:
 
   Retreive a list of exisiting end point definitions
 
+  * Parameter `download` (opitonal)
+  
+    if given, the output JSON will be pretty formatted and proper header will be set in response to trigger download in browser.
+
 * POST
 
-  Creating a new end point. Following parameters are supported>
+  Create a new end point. Following parameters are supported:
   - `path` (Required)
   - `method` (standard HTTP request method, default: `GET`)
   - `status` (standard HTTP status code, default: `200`)
@@ -79,4 +83,4 @@ Following aspects of an end point can be defined:
 
 * `--data=data.json`
 
-  Server by default starts with no end point definition. If a file named `config.json` exists in the same directory the JAR file is executed, or is specified using `--data`. Server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config`)
+  Server by default starts with no end point definition. If a file named `data.json` exists in the same directory the JAR file is executed, or any file specified using `--data`, server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config?download`)
