@@ -36,11 +36,6 @@ public class EndPointController {
     return endPointService.getAll ();
   }
 
-  @GetMapping ("/{id}")
-  public ResponseEntity<EndPoint> getConfigById (@PathVariable String id) {
-    return ResponseEntity.of (endPointService.getById (id));
-  }
-
   @PostMapping
   public ResponseEntity<EndPoint> createConfig (EndPoint data,
                                                 UriComponentsBuilder ucb) {
@@ -71,4 +66,27 @@ public class EndPointController {
     return ResponseEntity.ok ().build ();
   }
 
+  @GetMapping ("/{id}")
+  public ResponseEntity<EndPoint> getConfigById (@PathVariable String id) {
+    return ResponseEntity.of (endPointService.getById (id));
+  }
+
+  @PutMapping ("/{id}")
+  public ResponseEntity<EndPoint> updateConfigById (@PathVariable String id, 
+                                                    EndPoint data) {
+    data.setId (id);
+    Optional<EndPoint> updated = endPointService.update (data);
+
+    return ResponseEntity.of (updated);
+  }
+
+  @DeleteMapping ("/{id}")
+  public ResponseEntity<EndPoint> deleteConfigById (@PathVariable String id) {
+    try {
+      endPointService.remove (id);
+      return ResponseEntity.ok ().build ();
+    } catch (Exception e) {
+      return ResponseEntity.unprocessableEntity().build();
+    }
+  }
 }

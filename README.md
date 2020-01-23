@@ -53,11 +53,11 @@ Following aspects of an end point can be defined:
 
   Retreive the definition for the end point by the given id
 
-* PUT (Not implemented yet)
+* PUT
 
   Update definition of the end point by the given id
 
-* DELETE (Not implemented yet)
+* DELETE
 
   Remove the end point by the given id.
 
