@@ -145,12 +145,13 @@ public class EndPointService {
       item.setDelay (delay);
 
       if (active && !item.isActive ()) {
-        getActiveByPath (item.getPath ()).ifPresent (other -> {
+        getActiveByPathAndMethod (item.getPath (), item.getMethod()).ifPresent (other -> {
           other.setActive (false);
           endPoints.add (other);
         });
-        item.setActive (active);
       }
+
+      item.setActive (active);
 
       endPoints.add (item);
     });

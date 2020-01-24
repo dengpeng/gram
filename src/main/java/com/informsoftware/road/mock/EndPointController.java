@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,11 +75,16 @@ public class EndPointController {
     }
   }
 
-  @PutMapping
+  @PutMapping(params = {"id"})
   public ResponseEntity<List<EndPoint>> updateConfig (EndPoint data) {
     Optional<List<EndPoint>> updated = endPointService.update (data);
 
     return ResponseEntity.of (updated);
+  }
+
+  @PutMapping
+  public ResponseEntity<List<EndPoint>> updateConfigFromBody (@RequestBody EndPoint data) {
+    return updateConfig (data);
   }
 
   @DeleteMapping
@@ -94,7 +100,7 @@ public class EndPointController {
 
   @PutMapping ("/{id}")
   public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id, 
-                                                          EndPoint data) {
+                                                          @RequestBody EndPoint data) {
     data.setId (id);
     Optional<List<EndPoint>> updated = endPointService.update (data);
 
