@@ -186,7 +186,8 @@ public class EndPoint {
   }
 
   public void setDelay (Long delay) {
-    this.delay = delay;
+    if (delay >= 0) {
+      this.delay = delay;
+    }
   }
-
 }
