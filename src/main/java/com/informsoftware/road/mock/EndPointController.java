@@ -59,8 +59,15 @@ public class EndPointController {
   }
 
   @PostMapping
-  public ResponseEntity<EndPoint> createConfig (EndPoint data,
+  public ResponseEntity<EndPoint> createConfig (@RequestBody(required = false) EndPoint data,
+                                                EndPoint params,
                                                 UriComponentsBuilder ucb) {
+    if (data == null && params == null) {
+      return ResponseEntity.badRequest ().build ();
+    } else if (data == null) {
+      data = params;
+    }
+
     if (StringUtils.isEmpty (data.getPath ())) {
       return ResponseEntity.badRequest ().build ();
     }
@@ -75,16 +82,18 @@ public class EndPointController {
     }
   }
 
-  @PutMapping(params = {"id"})
-  public ResponseEntity<List<EndPoint>> updateConfig (EndPoint data) {
+  @PutMapping
+  public ResponseEntity<List<EndPoint>> updateConfig (@RequestBody(required = false) EndPoint data, 
+                                                      EndPoint params) {
+    if (data == null && params == null) {
+      return ResponseEntity.badRequest ().build ();
+    } else if (data == null) {
+      data = params;
+    }
+
     Optional<List<EndPoint>> updated = endPointService.update (data);
 
     return ResponseEntity.of (updated);
-  }
-
-  @PutMapping
-  public ResponseEntity<List<EndPoint>> updateConfigFromBody (@RequestBody EndPoint data) {
-    return updateConfig (data);
   }
 
   @DeleteMapping
