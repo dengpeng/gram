@@ -34,7 +34,7 @@ public class EndPointService {
   static final Logger   log               = LoggerFactory.getLogger (EndPointService.class);
   static final String   DEFAULT_DATA_FILE = "data.json";
 
-  Map<String, EndPoint> endPointMap = new ConcurrentHashMap<> ();
+  Map<String, EndPoint> endPointMap       = new ConcurrentHashMap<> ();
   File                  dataFile;
   ObjectMapper          objectMapper;
 
@@ -114,7 +114,7 @@ public class EndPointService {
     return add (newItem);
   }
 
-  public Optional<EndPoint> update (EndPoint data) {
+  public Optional<List<EndPoint>> update (EndPoint data) {
     return update (data.getId (),
                    data.getPath (),
                    data.getResponse (),
@@ -125,15 +125,16 @@ public class EndPointService {
                    data.isActive ());
   }
 
-  public Optional<EndPoint> update (String id,
-                                    String path,
-                                    String response,
-                                    HttpStatus status,
-                                    RequestMethod method,
-                                    MediaType mediaType,
-                                    Long delay,
-                                    boolean active) {
+  public Optional<List<EndPoint>> update (String id,
+                                          String path,
+                                          String response,
+                                          HttpStatus status,
+                                          RequestMethod method,
+                                          MediaType mediaType,
+                                          Long delay,
+                                          boolean active) {
     Optional<EndPoint> endPoint = getById (id);
+    List<EndPoint> endPoints = new ArrayList<> ();
 
     endPoint.ifPresent (item -> {
       item.setPath (path);
@@ -146,12 +147,15 @@ public class EndPointService {
       if (active && !item.isActive ()) {
         getActiveByPath (item.getPath ()).ifPresent (other -> {
           other.setActive (false);
+          endPoints.add (other);
         });
         item.setActive (active);
       }
+
+      endPoints.add (item);
     });
 
-    return endPoint;
+    return endPoints.isEmpty () ? Optional.empty () : Optional.of (endPoints);
   }
 
   public void remove (String id) {

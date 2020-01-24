@@ -75,8 +75,8 @@ public class EndPointController {
   }
 
   @PutMapping
-  public ResponseEntity<EndPoint> updateConfig (EndPoint data) {
-    Optional<EndPoint> updated = endPointService.update (data);
+  public ResponseEntity<List<EndPoint>> updateConfig (EndPoint data) {
+    Optional<List<EndPoint>> updated = endPointService.update (data);
 
     return ResponseEntity.of (updated);
   }
@@ -93,10 +93,10 @@ public class EndPointController {
   }
 
   @PutMapping ("/{id}")
-  public ResponseEntity<EndPoint> updateConfigById (@PathVariable String id, 
-                                                    EndPoint data) {
+  public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id, 
+                                                          EndPoint data) {
     data.setId (id);
-    Optional<EndPoint> updated = endPointService.update (data);
+    Optional<List<EndPoint>> updated = endPointService.update (data);
 
     return ResponseEntity.of (updated);
   }
