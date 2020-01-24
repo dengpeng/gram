@@ -36,7 +36,7 @@ public class EndPoint {
                    String response,
                    HttpStatus status) {
     this ();
-    this.path = path;
+    setPath(path);
     this.response = response;
 
     if (status != null) {
@@ -99,6 +99,9 @@ public class EndPoint {
 
   public void setPath (String path) {
     if (!StringUtils.isEmpty (path)) {
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
       this.path = path;
     }
   }
