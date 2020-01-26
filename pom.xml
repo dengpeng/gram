@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.informsoftware.road</groupId>
-	<artifactId>rest-server-mock</artifactId>
+	<artifactId>gram</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>GRAM</name>
+	<description>Generic REST API Mock</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -57,8 +57,98 @@
 						<exclude>src/main/javascript/</exclude>
 					</excludes>
 				</configuration>
-		</plugin>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+          <execution>
+            <id>copy-js-app</id>
+            <!-- here the phase you need -->
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static/</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/main/javascript/build/</directory>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+        </executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<!-- Required: The following will ensure `npm install` is called before anything else during the 'Default Lifecycle' -->
+					<execution>
+						<id>npm install (initialize)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- Required: The following will ensure `npm install` is called before anything else during the 'Clean Lifecycle' -->
+					<execution>
+						<id>npm install (clean)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>pre-clean</phase>
+						<configuration>
+							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- Required: This following calls `npm run build` -->
+					<execution>
+						<id>npm run build (compile)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>compile</phase>
+						<configuration>
+							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>build</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- Required: The following will run unit tests. -->
+					<execution>
+						<id>npm run test (test)</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>test</phase>
+						<configuration>
+							<skip>${maven.test.skip}</skip>
+							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>run</argument>
+								<argument>test</argument>
+								<argument>--watchAll=false</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
