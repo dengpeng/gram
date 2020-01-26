@@ -33,8 +33,8 @@ export default () => {
     return (
       <Container maxWidth="md">
         <h1>Oops, something went wrong ...</h1>
-        <div>{dataError && dataError.toString()}</div>
-        <div>{enumsError && enumsError.toString()}</div>
+        {dataError && (<div>Loading end points: {dataError.toString()}</div>)}
+        {enumsError && (<div>Loading enums: {enumsError.toString()}</div>)}
       </Container>
     );
   }

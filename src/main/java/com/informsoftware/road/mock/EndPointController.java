@@ -135,8 +135,7 @@ public class EndPointController {
 
   @DeleteMapping
   public ResponseEntity<EndPoint> removeConfig (@RequestParam String id) {
-    endPointService.remove (id);
-    return ResponseEntity.ok ().build ();
+    return ResponseEntity.of(endPointService.remove (id));
   }
 
   @GetMapping ("/{id}")
@@ -154,12 +153,7 @@ public class EndPointController {
   }
 
   @DeleteMapping ("/{id}")
-  public ResponseEntity<EndPoint> deleteConfigById (@PathVariable String id) {
-    try {
-      endPointService.remove (id);
-      return ResponseEntity.ok ().build ();
-    } catch (Exception e) {
-      return ResponseEntity.unprocessableEntity ().build ();
-    }
+  public ResponseEntity<EndPoint> removeConfigById (@PathVariable String id) {
+    return removeConfig(id);
   }
 }

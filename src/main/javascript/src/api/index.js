@@ -49,10 +49,8 @@ export async function getEndPoints() {
 
 export async function deleteEndPoint(id) {
   try {
-    const { status } = await axios.delete(apiRoot + '/' + id);
-
-    return status === 200;
-
+    const { data } = await axios.delete(apiRoot + '/' + id);
+    return data
   } catch (err) {
     throw err;
   }
@@ -60,7 +58,7 @@ export async function deleteEndPoint(id) {
 
 export async function createEndPoint(endPoint) {
   try {
-    const {data} = await axios.post(apiRoot, endPoint);
+    const { data } = await axios.post(apiRoot, endPoint);
     return data;
   } catch (err) {
     throw err;
@@ -69,7 +67,7 @@ export async function createEndPoint(endPoint) {
 
 export async function updateEndPoint(endPoint) {
   try {
-    const {data} = await axios.put(apiRoot, endPoint);
+    const { data } = await axios.put(apiRoot, endPoint);
     return data;
   } catch (err) {
     throw err;

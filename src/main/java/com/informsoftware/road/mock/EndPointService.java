@@ -159,8 +159,8 @@ public class EndPointService {
     return endPoints.isEmpty () ? Optional.empty () : Optional.of (endPoints);
   }
 
-  public void remove (String id) {
-    endPointMap.remove (id);
+  public Optional<EndPoint> remove (String id) {
+    return Optional.ofNullable(endPointMap.remove (id));
   }
 
   public List<EndPoint> getAll () {
