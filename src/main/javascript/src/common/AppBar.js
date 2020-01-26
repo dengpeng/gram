@@ -6,6 +6,7 @@ import { Typography, AppBar, Toolbar, IconButton, Container, Grid, Tooltip } fro
 import AddIcon from '@material-ui/icons/AddCircle';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import DownloadIcon from '@material-ui/icons/CloudDownload';
+import PollIcon from '@material-ui/icons/Poll';
 import { makeStyles, styled } from '@material-ui/core/styles';
 
 const ActionButton = styled(IconButton)(({theme}) => ({
@@ -13,13 +14,15 @@ const ActionButton = styled(IconButton)(({theme}) => ({
 }));
 
 const useStyles = makeStyles(theme => ({
-  root: {
-  },
   title: {
     display: 'flex',
-    alignItems: 'center'
-    // flexGrow: 1,
-    // padding: theme.spacing(1),
+    alignItems: 'center',
+    "& h5": { 
+      marginLeft: theme.spacing(1), 
+      fontWeight: 800,
+      letterSpacing: 0,
+      fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif'
+    }
   },
   actionBtns: {
     display: 'flex',
@@ -39,7 +42,7 @@ export default () => {
   const onDownload = e => {
     let url = downloadUrl;
     if (process.env.NODE_ENV === 'development') {
-      url = 'http://localhost:9000' + url;
+      url = 'http://localhost:9000/' + url;
     }
     window.open(url);
   }
@@ -49,12 +52,12 @@ export default () => {
   };
 
   return (
-    <div className="root">
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar disableGutters>
           <Container maxWidth="md">
             <Grid container spacing={1}>
               <Grid item xs={9} className={classes.title} >
+                <PollIcon fontSize="large" />
                 <Typography variant="h5">GRAM</Typography>
               </Grid>
               <Grid item xs={3} className={classes.actionBtns}>
@@ -72,6 +75,5 @@ export default () => {
           </Container>
         </Toolbar>
       </AppBar>
-    </div>
   )
 }
