@@ -17,7 +17,7 @@ const filtersSlice = createSlice({
   reducers: {
     filterVisibility: (state, { payload }) => {
       if (visibilityFilters[payload]) {
-        state.visibility = payload
+        state.visibility = visibilityFilters[payload] ? payload : 'ALL'
       }
     },
     filterPath: (state, { payload }) => {

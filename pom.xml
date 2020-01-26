@@ -98,21 +98,6 @@
 							</arguments>
 						</configuration>
 					</execution>
-					<!-- Required: The following will ensure `npm install` is called before anything else during the 'Clean Lifecycle' -->
-					<execution>
-						<id>npm install (clean)</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>pre-clean</phase>
-						<configuration>
-							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
-							<executable>npm</executable>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-						</configuration>
-					</execution>
 					<!-- Required: This following calls `npm run build` -->
 					<execution>
 						<id>npm run build (compile)</id>
@@ -143,6 +128,7 @@
 							<arguments>
 								<argument>run</argument>
 								<argument>test</argument>
+								<argument>--</argument>
 								<argument>--watchAll=false</argument>
 							</arguments>
 						</configuration>
