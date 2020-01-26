@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
   delayChip: {
     backgroundColor: ({delay}) => {
       if (delay <= 0) {
-        return theme.palette.grey[500];
+        return theme.palette.grey[300];
       } else if (delay <= 1000) {
         return theme.palette.info.light;
       } else if (delay <= 2000) {
@@ -80,15 +80,15 @@ const useStyles = makeStyles(theme => ({
   statusChip: {
     backgroundColor: ({statusCode}) => {
       if (statusCode < 200) {
-        return theme.palette.grey[500];
+        return theme.palette.info.light
       } else if (statusCode < 300) {
         return theme.palette.success.light;
       } else if (statusCode < 400) {
-        return theme.palette.info.light;
-      } else if (statusCode < 500) {
         return theme.palette.warning.light;
-      } else {
+      } else if (statusCode < 500) {
         return theme.palette.error.light;
+      } else {
+        return theme.palette.grey[500];
       }
     }
   },
