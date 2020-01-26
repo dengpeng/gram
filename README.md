@@ -1,8 +1,8 @@
-# GRAMS: A Generic REST-API Mock Server 
+# GRAM: A Generic REST-API Mock 
 
 ## Description
 
-GRAMS is a simple web server which enables defining of mock API end points flexibly using a RESTful interface at `/config` or using an integrated web app (WIP).
+GRAM is a simple Java based application which serves _mock_ API end points flexibly defined using a **RESTful interface** or using an integrated **web app**.
 
 The defined mock API end points can be accessed at the same server under the sub-path `/mock/`.
 
@@ -14,11 +14,19 @@ Following aspects of an end point can be defined:
 
 * **Path** for the request (e.g "foo/bar", then it will be accessible at `/mock/foo/bar`)
 * **Request method** (`GET`, `POST` etc.)
-* **Status code** of response (`200`, `404` etc.)
+* **Status code** of response (`200 OK`, `404 Not Found` etc.)
 * **Content type** of response (e.g. application/json, text/html)
 * **Response Body**
 * **Delay** (psuedo delay before the response is delivered, in millisecond)
-* **Activeness** (An end point definition can be toggled active/inactive. For multiple definitions for the same path/method combination, only one can be active)
+
+Moreover, an end point definition can be toggled active/inactive. Among multiple definitions with the same path/method combination, only one definition can be activated.
+
+Currently following content types can be used:
+
+* application/json
+* application/xml
+* text/html
+* text/plain
 
 ## REST-API for configuring end points
 
@@ -28,60 +36,114 @@ Following aspects of an end point can be defined:
 
   Retreive a list of exisiting end point definitions
 
-  * Parameter `download` (opitonal)
+  + Parameter
   
-    if given, the output JSON will be pretty formatted and proper header will be set in response to trigger download in browser.
+    - `download` (opitonal)
+  
+       if given, the output JSON will be pretty formatted and proper header will be set in response to trigger download in browser.
+
+  + Response
+    - `200 OK` and a list of existing end point definitions
 
 * POST
 
-  Create a new end point. Following parameters are supported:
-  - `path` (Required)
-  - `method` (standard HTTP request method, default: `GET`)
-  - `status` (standard HTTP status code, default: `200`)
-  - `contentType` (default: `application/json`)
-  - `response`
-  - `delay`
-  - `active` (Will be true by default if no other definition exists for the same path and method)
+  Create a new end point definition. It will be automatically activated if no other definition exists with the same path/method combination. Otherwise it will be created inactive. 
+  
+  Support parameters in request body (JSON object) as well as using query parameters.
+
+  + Parameters
+    - `path` (Required, non-empty)
+    - `method` (standard HTTP request method, default: `GET`)
+    - `status` (standard HTTP status enum, default: `OK`)
+    - `contentType` (default: `application/json`)
+    - `response`
+    - `delay`
+
+  + Response
+    - `201 Created`, and the created end point definition. The URI of the created entity is available in the header "Location"
 
 * PUT
 
-  Updating an existing end point. Parameter `id` is required, all parameters from POST-request are supported. If a definition is toggled active, any other active definition with the same path/method will be deactivated.
+  Updating an existing end point. If a definition is toggled active, active definition with the same path/method will be deactivated. Support parameters in request body as well as using query parameters
+  
+  + Parameters
+    - `id`: required
+    - all parameters for POST-request are supported. 
+
+  + Response
+    - `200 OK` and a list of changed end point definitions
+    - `404 Not Found` if the end point with given id is not found
 
 * DELETE
 
-  Remove an existing end point. Parameter `id` is required.
+  Remove an existing end point. 
+  
+  + Parameter 
+    - `id` (required)
+
+  + Response: 
+    - `200 OK` and the deleted end point definition
+    - `404 Not Found` if the end point with given id is not found
+
 
 ### `/config/[id]`
 
 * GET
 
-  Retreive the definition for the end point by the given id
+  + Response
+    - `200 OK` and the end point definition by the given id
+    - `404 Not Found` if the definition with given id is not found
 
 * PUT
 
-  Update definition of the end point by the given id
+  + Parameters
+    - same as PUT-reqeust to `/config`, except parameter "id" is not required.
+    
+  + Response 
+    - same as PUT-reqeust to `/config`, see above
 
 * DELETE
 
-  Remove the end point by the given id.
+  + Parameters
+    - same as DELETE-reqeust to `/config`, except parameter "id" is not required.
+    
+  + Response
+    - same as DELETE-reqeust to `/config`, see above
+
+### `/config/httpStatus`
+
+* GET
+  + Response
+    - `200 OK` and a list of available HTTP status
+
+### `/config/httpMethod`
+* GET
+  + Response
+    - `200 OK` and a list of available HTTP Methods
+
+### `/config/contentType`
+* GET
+  + Response
+    - `200 OK` and a list of available content types
+
 
 ## Get started
 
 1. Start server
 
-       java -jar api-mock-0.0.1-SNAPSHOT.jar
+       java -jar gram-0.0.1-SNAPSHOT.jar
 
-2. Open browser and go to: http://localhost:9000/ or interact directly with the REST-interface at http://localhost:9000/config
+2. Open browser and go to: http://localhost:9000/ , or interact directly with the REST-interface at http://localhost:9000/config
 
 3. All defined end points can be accessed at http://localhost:9000/mock/*
 
 ### Command-Line Parameters
 
-* `--server.port=8000`
+* `--server.port=<port>`
 
   Server by default starts with port *9000*. Use this parameter to change to other port.
 
-* `--data=data.json`
+* `--data=<JSON data file>`
 
   Server by default starts with no end point definition. If a file named `data.json` exists in the same directory the JAR file is executed, or any file specified using `--data`, server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config?download`)
 
@@ -98,12 +160,12 @@ Following aspects of an end point can be defined:
 ### Dependencies
 
 * Java
-  - Spring-Boot
+  - `spring-boot`
 * JavaScript
-  - react-js
-  - redux-toolkit / react-redux
-  - axios
-  - material-ui
+  - `react-js`: view rendering
+  - `redux-toolkit` / `react-redux` state management
+  - `axios`: async communication to backend API
+  - `material-ui`: UI component library
 
 ## Build
 
@@ -118,4 +180,5 @@ Following aspects of an end point can be defined:
 * Frontend (available at http://localhost:3000)
 
       cd src/main/javascript
+      npm install (first time)
       npm start
