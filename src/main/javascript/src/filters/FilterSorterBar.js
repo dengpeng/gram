@@ -2,12 +2,13 @@ import React from 'react'
 import { Container, Grid } from '@material-ui/core'
 import VisibilityFilter from './VisibilityFilter'
 import PathFilter from './PathFilter'
+import Sorters from './Sorters'
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2)
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(3)
   }
 }));
 
@@ -22,14 +23,7 @@ export default () => {
           <PathFilter />
         </Grid>
         <Grid item xs={4}>
-          {/* <FormControl className={classes.formControl}>
-              <InputLabel id="visibility-filter-label">Sort by</InputLabel>
-              <Select labelId="visibility-filter-label" id="visibility-filter-select">
-                <MenuItem value={0}>Path</MenuItem>
-                <MenuItem value={1}>Method</MenuItem>
-                <MenuItem value={1}>Method</MenuItem>
-              </Select>
-            </FormControl> */}
+          <Sorters />
         </Grid>
       </Grid>
     </Container>

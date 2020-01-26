@@ -21,12 +21,27 @@ const pathFilterFn = path => (item) => {
   return !path || (item.path && item.path.indexOf(path) > -1);
 }
 
+const sorterFn = (field, ascending) => (a, b) => {
+  let o1 = a[field], o2 = b[field]
+
+  if (typeof o1 === 'string') {
+    return ascending ? o1.localeCompare(o2) : o2.localeCompare(o1);
+  }
+
+  return ascending ? o1 - o2 : o2 - o1;
+}
+
 const selectEndPoints = state => state.endPoints.endPointsById;
 const selectFilters = state => state.filters;
+const selectSorter = state => state.sorter;
+
 const selectVisibleEndPoints = createSelector(
-  [selectEndPoints, selectFilters],
-  (endPointsById, { visibility, path }) => {
-    return Object.values(endPointsById).filter(visibilityFilterFn(visibility)).filter(pathFilterFn(path));
+  [selectEndPoints, selectFilters, selectSorter],
+  (endPointsById, { visibility, path }, { field, ascending }) => {
+    return Object.values(endPointsById)
+                 .filter(visibilityFilterFn(visibility))
+                 .filter(pathFilterFn(path))
+                 .sort(sorterFn(field, ascending));
   }
 );
 

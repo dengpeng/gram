@@ -7,7 +7,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 const useStyles = makeStyles(theme => ({
   textField: {
-    margin: theme.spacing(1),
+    marginLeft: theme.spacing(2),
     width: 200
   },
 }));
