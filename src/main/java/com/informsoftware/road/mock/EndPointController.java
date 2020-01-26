@@ -1,11 +1,17 @@
 package com.informsoftware.road.mock;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,12 +34,45 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class EndPointController {
 
   EndPointService endPointService;
-  ObjectMapper objectMapper;
+  ObjectMapper    objectMapper;
 
   @Autowired
-  public void setEndPointService (EndPointService endPointService, ObjectMapper objectMapper) {
+  public void setEndPointService (EndPointService endPointService,
+                                  ObjectMapper objectMapper) {
     this.endPointService = endPointService;
     this.objectMapper = objectMapper;
+  }
+
+  @GetMapping ("/httpMethod")
+  public HttpMethod[] getHttpMethod () {
+    return HttpMethod.values ();
+  }
+
+  @GetMapping ("/httpStatus")
+  public List<Map<String, Object>> getHttpStatus () {
+    List<Map<String, Object>> result = new ArrayList<> ();
+
+    for (HttpStatus status: HttpStatus.values ()) {
+      Map<String, Object> attrs = new HashMap<> ();
+      attrs.put ("key", status.name ());
+      attrs.put ("text", status.getReasonPhrase ());
+      attrs.put ("code", status.value ());
+      result.add (attrs);
+    }
+
+    return result;
+  }
+
+  @GetMapping ("/contentType")
+  public Map<String, String> getContentType () {
+    Map<String, String> data = new HashMap<> ();
+
+    data.put ("JSON", MediaType.APPLICATION_JSON.toString ());
+    data.put ("XML", MediaType.APPLICATION_XML.toString ());
+    data.put ("HTML", MediaType.TEXT_HTML.toString ());
+    data.put ("Text", MediaType.TEXT_PLAIN.toString ());
+
+    return data;
   }
 
   @GetMapping
@@ -41,25 +80,23 @@ public class EndPointController {
     return endPointService.getAll ();
   }
 
-  @GetMapping(params = "download")
+  @GetMapping (params = "download")
   public ResponseEntity<String> downloadAll () {
     List<EndPoint> data = endPointService.getAll ();
 
     String json = "";
-    
+
     try {
-      json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(data);
+      json = objectMapper.writerWithDefaultPrettyPrinter ().writeValueAsString (data);
     } catch (Exception e) {
-      return ResponseEntity.unprocessableEntity().body(e.getMessage());
+      return ResponseEntity.unprocessableEntity ().body (e.getMessage ());
     }
 
-    return ResponseEntity.ok()
-                         .header ("Content-Disposition", "attachment; filename=\"data.json\"")
-                         .body (json);
+    return ResponseEntity.ok ().header ("Content-Disposition", "attachment; filename=\"data.json\"").body (json);
   }
 
   @PostMapping
-  public ResponseEntity<EndPoint> createConfig (@RequestBody(required = false) EndPoint data,
+  public ResponseEntity<EndPoint> createConfig (@RequestBody (required = false) EndPoint data,
                                                 EndPoint params,
                                                 UriComponentsBuilder ucb) {
     if (data == null && params == null) {
@@ -83,7 +120,7 @@ public class EndPointController {
   }
 
   @PutMapping
-  public ResponseEntity<List<EndPoint>> updateConfig (@RequestBody(required = false) EndPoint data, 
+  public ResponseEntity<List<EndPoint>> updateConfig (@RequestBody (required = false) EndPoint data,
                                                       EndPoint params) {
     if (data == null && params == null) {
       return ResponseEntity.badRequest ().build ();
@@ -108,7 +145,7 @@ public class EndPointController {
   }
 
   @PutMapping ("/{id}")
-  public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id, 
+  public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id,
                                                           @RequestBody EndPoint data) {
     data.setId (id);
     Optional<List<EndPoint>> updated = endPointService.update (data);
@@ -122,7 +159,7 @@ public class EndPointController {
       endPointService.remove (id);
       return ResponseEntity.ok ().build ();
     } catch (Exception e) {
-      return ResponseEntity.unprocessableEntity().build();
+      return ResponseEntity.unprocessableEntity ().build ();
     }
   }
 }
