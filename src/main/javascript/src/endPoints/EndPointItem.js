@@ -71,6 +71,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: ({delay}) => {
       if (delay <= 0) {
         return theme.palette.grey[300];
+      } else if (delay <= 500) {
+        return theme.palette.success.light;
       } else if (delay <= 1000) {
         return theme.palette.info.light;
       } else if (delay <= 2000) {
