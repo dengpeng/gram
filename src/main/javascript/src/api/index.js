@@ -73,3 +73,12 @@ export async function updateEndPoint(endPoint) {
     throw err;
   }
 }
+
+export async function getRequestLogs(endPointId) {
+  try {
+    const { data } = await axios.get(apiRoot + '/' + endPointId + '/request');
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}

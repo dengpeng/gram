@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { startUpdate, update, select, remove } from './endPointsSlice';
+import { loadLogs } from '../requestLogs/requestLogsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   ExpansionPanel, 
@@ -114,7 +115,9 @@ const useStyles = makeStyles(theme => ({
 export default ({ endPoint }) => {
   const { id, method, path, status, contentType, delay, response, active } = endPoint;
 
-  const [currentEndPoint, httpStatus] = useSelector(({endPoints, enums}) => [endPoints.currentEndPoint, enums.httpStatus]);
+  const [currentEndPoint, httpStatus, logs, isLoadingLogs] = useSelector(
+    ({endPoints, enums, logs}) => [ endPoints.currentEndPoint, enums.httpStatus, logs.logsByEndPoint[endPoint.id], logs.isLoading]
+  );
   const statusCode = httpStatus[status] ? httpStatus[status].code : 0;
   const dispatch = useDispatch();
   const classes = useStyles({ method, delay, statusCode, active });
@@ -145,6 +148,9 @@ export default ({ endPoint }) => {
       active: !endPoint.active
     }));
   }
+  const onRefreshLog = () => {
+    dispatch(loadLogs(endPoint.id));
+  }
 
   const contentTypeShort = contentType.substring(contentType.indexOf('/') + 1).toUpperCase();
 
@@ -169,11 +175,13 @@ export default ({ endPoint }) => {
         <Tabs value={viewReqLogs ? 1 : 0} onChange={(e, newValue) => setViewReqLogs(newValue) } 
               indicatorColor="primary" textColor="primary" className={classes.detailTabs} >
           <Tab label="Response" />
-          <Tab label="Request Logs" onClick={ () => { console.log ('refresh req logs')}} />
+          <Tab label="Request Logs" onClick={onRefreshLog} />
         </Tabs>
         {viewReqLogs ?
           <div className={classes.responseBody}>
-            <pre>Coming soon ...</pre>
+            {isLoadingLogs ? <pre>Loading ...</pre> : 
+              <pre>{logs.map(log => new Date(log.timeStamp).toUTCString() + " - " + log.remoteAddress + "\n")}</pre> // TODO
+            }
           </div>
           :
           <div className={classes.responseBody}>
