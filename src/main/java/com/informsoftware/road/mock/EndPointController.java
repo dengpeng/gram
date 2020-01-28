@@ -143,6 +143,17 @@ public class EndPointController {
     return ResponseEntity.of (endPointService.getById (id));
   }
 
+  @GetMapping ("/{id}/request")
+  public ResponseEntity<List<EndPointRequest>> getRequestLogByEndPoint (@PathVariable String id) {
+    Optional<EndPoint> endPoint = endPointService.getById (id);
+    if (endPoint.isPresent()) {
+      return ResponseEntity.ok(endPoint.get().getLoggedRequests());
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+
   @PutMapping ("/{id}")
   public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id,
                                                           @RequestBody EndPoint data) {

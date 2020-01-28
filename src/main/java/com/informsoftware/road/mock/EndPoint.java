@@ -1,6 +1,11 @@
 package com.informsoftware.road.mock;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,8 +33,11 @@ public class EndPoint {
   private MediaType     mediaType;
   private Long          delay;                                         // millisecond
 
+  private List<EndPointRequest> loggedRequests;
+
   public EndPoint () {
     this.id = UUID.randomUUID ().toString ();
+    loggedRequests = Collections.synchronizedList(new ArrayList<>());
   }
 
   public EndPoint (String path,
@@ -189,5 +197,14 @@ public class EndPoint {
     if (delay >= 0) {
       this.delay = delay;
     }
+  }
+
+  @JsonIgnore
+  public List<EndPointRequest> getLoggedRequests () {
+    return loggedRequests;
+  }
+
+  public void logRequest (HttpServletRequest servletRequest) {
+    loggedRequests.add (new EndPointRequest (servletRequest));
   }
 }

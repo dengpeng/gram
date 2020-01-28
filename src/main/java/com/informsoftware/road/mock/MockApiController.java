@@ -35,6 +35,8 @@ public class MockApiController {
 
     if (endPoint.isPresent ()) {
       EndPoint endPointActual = endPoint.get ();
+      endPointActual.logRequest(request);
+
       Long delay = endPointActual.getDelay ();
 
       if (delay != null && delay > 0) {
