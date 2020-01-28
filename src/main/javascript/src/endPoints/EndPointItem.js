@@ -6,6 +6,8 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails, 
   ExpansionPanelActions,
+  Tabs,
+  Tab,
   Button,
   IconButton,
   Box,
@@ -92,10 +94,20 @@ const useStyles = makeStyles(theme => ({
       }
     }
   },
+  details: {
+    flexDirection: 'column',
+    height: theme.spacing(20),
+    padding: theme.spacing(0, 0, 2, 0),
+  },
+  detailTabs: {
+    backgroundColor: theme.palette.grey[50],
+    minHeight: theme.spacing(5),
+    '& button': { minHeight: theme.spacing(5) }
+  },
   responseBody: {
+    padding: theme.spacing(1, 2, 0, 2),
     flexGrow: 1,
-    overflow: 'auto',
-    maxHeight: theme.spacing(12)
+    overflow: 'auto'
   }
 }));
 
@@ -107,6 +119,7 @@ export default ({ endPoint }) => {
   const dispatch = useDispatch();
   const classes = useStyles({ method, delay, statusCode, active });
   const [removeTimeout, setRemoveTimeout] = useState(null);
+  const [viewReqLogs, setViewReqLogs] = useState(false);
 
   const resetRemove = () => {
     if (removeTimeout) {
@@ -151,10 +164,22 @@ export default ({ endPoint }) => {
           <Chip className={classes.delayChip} label={delay + ' ms'} />
         </div>
       </ExpansionPanelSummary>
-      <ExpansionPanelDetails className="dimmable">
-        <div className={classes.responseBody}>
-          <pre>{response}</pre>
-        </div>
+      <Divider />
+      <ExpansionPanelDetails className={classes.details + " dimmable"}>
+        <Tabs value={viewReqLogs ? 1 : 0} onChange={(e, newValue) => setViewReqLogs(newValue) } 
+              indicatorColor="primary" textColor="primary" className={classes.detailTabs} >
+          <Tab label="Response" />
+          <Tab label="Request Logs" onClick={ () => { console.log ('refresh req logs')}} />
+        </Tabs>
+        {viewReqLogs ?
+          <div className={classes.responseBody}>
+            <pre>Coming soon ...</pre>
+          </div>
+          :
+          <div className={classes.responseBody}>
+            <pre>{response}</pre>
+          </div>
+        }
       </ExpansionPanelDetails>
       <Divider />
       <ExpansionPanelActions>
