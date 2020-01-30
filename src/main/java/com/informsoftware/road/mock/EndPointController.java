@@ -144,10 +144,12 @@ public class EndPointController {
   }
 
   @GetMapping ("/{id}/request")
-  public ResponseEntity<List<EndPointRequest>> getRequestLogByEndPoint (@PathVariable String id) {
+  public ResponseEntity<EndPointRequestData> getRequestLogByEndPoint (@PathVariable String id,
+                                                                        @RequestParam(defaultValue = "5") int pageSize,
+                                                                        @RequestParam(defaultValue = "1") int page) {
     Optional<EndPoint> endPoint = endPointService.getById (id);
     if (endPoint.isPresent()) {
-      return ResponseEntity.ok(endPoint.get().getLoggedRequests());
+      return ResponseEntity.ok(endPoint.get().getLoggedRequests(pageSize, page));
     } else {
       return ResponseEntity.notFound().build();
     }

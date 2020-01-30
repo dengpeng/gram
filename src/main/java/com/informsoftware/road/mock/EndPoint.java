@@ -200,11 +200,24 @@ public class EndPoint {
   }
 
   @JsonIgnore
-  public List<EndPointRequest> getLoggedRequests () {
-    return loggedRequests;
+  public EndPointRequestData getLoggedRequests (int pageSize, int page) {
+    int begin = (page - 1) * pageSize;
+    int end = page * pageSize;
+    int totalRecords = loggedRequests.size();
+    int totalPages = (int) Math.ceil(totalRecords / Double.valueOf(pageSize));
+    List<EndPointRequest> data = new ArrayList<>();
+
+    if (begin >= 0 && begin < totalRecords) {
+      if (end > totalRecords) {
+        end = totalRecords;
+      }
+      data.addAll(loggedRequests.subList (begin, end));
+    }
+
+    return new EndPointRequestData(data, totalRecords, totalPages, page, pageSize);
   }
 
   public void logRequest (HttpServletRequest servletRequest) {
-    loggedRequests.add (new EndPointRequest (servletRequest));
+    loggedRequests.add (0, new EndPointRequest (servletRequest));
   }
 }
