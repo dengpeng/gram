@@ -3,6 +3,7 @@ import { getRequestLogs } from '../api'
 
 const initialRequestLogsState = {
   logsByEndPoint : {},
+  metaByEndPoint: {},
   isLoading: false,
   error: null
 }
@@ -11,9 +12,10 @@ const requestLogsReducer = createSlice({
   name: 'requestLogs',
   initialState: initialRequestLogsState,
   reducers: {
-    loadSuccess (state, { payload }) {
+    loadSuccess (state, { payload: { id, data, totalPages, totalRecords, currentPage, pageSize }}) {
       state.isLoading = false;
-      state.logsByEndPoint[payload.id] = payload.logs;
+      state.logsByEndPoint[id] = data;
+      state.metaByEndPoint[id] = { totalPages, totalRecords, currentPage, pageSize };
     },
 
     loadFailure (state, { payload }) {
@@ -35,8 +37,8 @@ export const { loadSuccess, loadFailure, loadStart } = actions;
 export const loadLogs = (id) => async dispatch => {
   try {
     dispatch(loadStart(id));
-    const logs = await getRequestLogs(id);
-    dispatch(loadSuccess({ id, logs }));
+    const response = await getRequestLogs(id);
+    dispatch(loadSuccess({ id, ...response }));
   } catch ({ message, response: { status, statusText, data, headers }}) {
     dispatch(loadFailure({
       error: {
