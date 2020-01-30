@@ -99,8 +99,8 @@ const useStyles = makeStyles(theme => ({
   },
   details: {
     flexDirection: 'column',
-    height: theme.spacing(20),
-    padding: theme.spacing(0, 0, 2, 0),
+    height: theme.spacing(30),
+    padding: theme.spacing(0, 0, 0, 0),
   },
   detailTabs: {
     backgroundColor: theme.palette.grey[50],
@@ -108,7 +108,7 @@ const useStyles = makeStyles(theme => ({
     '& button': { minHeight: theme.spacing(5) }
   },
   responseBody: {
-    padding: theme.spacing(1, 2, 0, 2),
+    padding: theme.spacing(1, 2),
     flexGrow: 1,
     overflow: 'auto'
   }
@@ -157,7 +157,7 @@ export default ({ endPoint }) => {
   const contentTypeShort = contentType.substring(contentType.indexOf('/') + 1).toUpperCase();
 
   return (
-    <ExpansionPanel expanded={id === currentEndPoint} onChange={onSelect} className={classes.root}>
+    <ExpansionPanel expanded={id === currentEndPoint} onChange={onSelect} className={classes.root} TransitionProps={{ timeout: 200 }}>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} id={"panelbh-header-" + id} className="dimmable">
         <div className={classes.method}><Chip label={method} className={classes.methodChip} /></div>
         <div className={classes.path}>
