@@ -8,7 +8,7 @@ import {
   Box,
   Divider,
   Switch,
-  Tooltip,
+  FormControlLabel,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -63,9 +63,7 @@ export default ({ endPoint }) => {
       <EndPointPanelDetails endPoint={endPoint} logs={logs} isLoadingLogs={isLoadingLogs} />
       <Divider />
       <ExpansionPanelActions>
-        <Tooltip title={active ? 'Deactivate' : 'Activate'} placement="right">
-          <Switch checked={active} onChange={onToggle} value="checkedA" color="primary" />
-        </Tooltip>
+        <FormControlLabel control={<Switch checked={active} onChange={onToggle} value="checkedA" color="primary" />} label={active ? 'Active':'Inactive'} />
         <Box flexGrow={1}></Box>
         { 
           removeTimeout ?
