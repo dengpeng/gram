@@ -34,10 +34,10 @@ const { actions, reducer } = requestLogsReducer;
 export default reducer;
 export const { loadSuccess, loadFailure, loadStart } = actions;
 
-export const loadLogs = (id) => async dispatch => {
+export const loadLogs = (id, page, pageSize) => async dispatch => {
   try {
     dispatch(loadStart(id));
-    const response = await getRequestLogs(id);
+    const response = await getRequestLogs(id, page, pageSize);
     dispatch(loadSuccess({ id, ...response }));
   } catch ({ message, response: { status, statusText, data, headers }}) {
     dispatch(loadFailure({

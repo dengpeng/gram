@@ -30,8 +30,8 @@ export default ({ endPoint }) => {
   const dispatch = useDispatch();
   const classes = useStyles({ active });
 
-  const [currentEndPoint, httpStatus, logs, isLoadingLogs] = useSelector(({endPoints, enums, logs}) =>
-    [endPoints.currentEndPoint, enums.httpStatus, logs.logsByEndPoint[endPoint.id], logs.isLoading]
+  const [currentEndPoint, httpStatus] = useSelector(({endPoints, enums}) =>
+    [endPoints.currentEndPoint, enums.httpStatus]
   );
 
   const [removeTimeout, setRemoveTimeout] = useState(null);
@@ -60,7 +60,7 @@ export default ({ endPoint }) => {
     <ExpansionPanel expanded={id === currentEndPoint} onChange={onSelect} className={classes.root} TransitionProps={{ timeout: 200 }}>
       <EndPointPanelSummary endPoint={endPoint} httpStatus={httpStatus} />
       <Divider />
-      <EndPointPanelDetails endPoint={endPoint} logs={logs} isLoadingLogs={isLoadingLogs} />
+      <EndPointPanelDetails endPoint={endPoint} />
       <Divider />
       <ExpansionPanelActions>
         <FormControlLabel control={<Switch checked={active} onChange={onToggle} value="checkedA" color="primary" />} label={active ? 'Active':'Inactive'} />

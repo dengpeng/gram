@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch } from 'react-redux'
 import { loadLogs } from '../requestLogs/requestLogsSlice'
+import EndPointPanelLogs from './EndPointPanelLogs'
 import { 
   ExpansionPanelDetails,
   Tabs,
@@ -20,13 +21,16 @@ const useStyles = makeStyles(theme => ({
     '& button': { minHeight: theme.spacing(5) }
   },
   responseBody: {
-    padding: theme.spacing(1, 2),
-    flexGrow: 1,
-    overflow: 'auto'
+    margin: 0,
+    padding: theme.spacing(2),
+    overflow: 'auto',
+    fontSize: 12,
+    lineHeight: '1.25em',
+    '& pre': { margin: 0 }
   }
 }))
 
-export default ({ endPoint, logs, isLoadingLogs }) => {
+export default ({ endPoint }) => {
   const classes = useStyles();
   const [viewReqLogs, setViewReqLogs] = useState(false);
   const dispatch = useDispatch();
@@ -43,14 +47,10 @@ export default ({ endPoint, logs, isLoadingLogs }) => {
         <Tab label="Request Logs" onClick={onRefreshLog} />
       </Tabs>
       {viewReqLogs ?
-        <div className={classes.responseBody}>
-          {isLoadingLogs ? <pre>Loading ...</pre> :
-            <pre>{logs.map(log => new Date(log.timeStamp).toUTCString() + " - " + log.remoteAddress + "\n")}</pre> // TODO
-          }
-        </div>
+        <EndPointPanelLogs endPoint={endPoint} />
         :
         <div className={classes.responseBody}>
-          <pre>{endPoint.response}</pre>
+          <pre><code>{endPoint.response}</code></pre>
         </div>
       }
     </ExpansionPanelDetails>
