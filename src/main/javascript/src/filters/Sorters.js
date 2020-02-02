@@ -2,8 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sort, sortableFields } from './sorterSlice'
 import { TextField, MenuItem, IconButton } from '@material-ui/core'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import SortIcon from '@material-ui/icons/Sort';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -20,6 +19,10 @@ const useStyles = makeStyles(theme => ({
   sorterDir: {
     marginTop: theme.spacing(2),
     marginLeft: theme.spacing(1)
+  },
+
+  ascending: {
+    transform: 'scaleY(-1)',
   }
 }));
 
@@ -49,7 +52,8 @@ export default () => {
         {Object.entries(sortableFields).map(([key, value]) => <MenuItem value={key} key={key}>{value}</MenuItem>)}
       </TextField>
       <IconButton size="small" className={classes.sorterDir} onClick={toggleDirection}>
-        {sorter.ascending ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+        {/* {sorter.ascending ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />} */}
+        <SortIcon className={sorter.ascending && classes.ascending} />
       </IconButton>
     </div>
   )
