@@ -39,11 +39,11 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(23),
     margin: theme.spacing(1),
     overflow: 'auto',
-    '& >ul': { margin: theme.spacing(0, 2), padding: 0, listStyle: 'none', lineHeight: '1.5em' },
+    '& >ul': { margin: theme.spacing(0, 2, 2), padding: 0, listStyle: 'none', lineHeight: '1.25em' },
     '& .inlineValue': { display: 'inline-block', fontFamily: 'monospace', marginLeft: theme.spacing(2) },
     '& pre': { margin: theme.spacing(0, 0, 0, 1), lineHeight: '1.25em' }
   },
-  label: { display: 'inline-block', color: theme.palette.primary.main, marginTop: theme.spacing(1) },
+  label: { display: 'inline-block', color: theme.palette.secondary.main, marginTop: theme.spacing(1) },
   queryParams: { 
     listStyle: 'none', paddingLeft: theme.spacing(2), fontFamily: 'monospace' ,
     '& li': { lineHeight: '1.25em' },
@@ -67,6 +67,11 @@ export default ({endPoint}) => {
     return (
       <div className={classes.root}>
         <CircularProgress />
+      </div>
+    )
+  } else if (!logs || logs.length === 0) {
+    return (
+      <div className={classes.root}>
       </div>
     )
   }
@@ -95,8 +100,6 @@ export default ({endPoint}) => {
         <IconButton size="small" disabled={isFirstPage} onClick={() => { handPageChange(currentPage-1) }}>
           <ArrowUpIcon />
         </IconButton>
-        {/* <Typography variant="button" align="center" display="block">1</Typography>
-        <Typography variant="button" align="center" display="block">2</Typography> */}
         <IconButton size="small" disabled={isLastPage} onClick={() => { handPageChange(currentPage+1) }}>
           <ArrowDownIcon />
         </IconButton>
