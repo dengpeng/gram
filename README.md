@@ -4,7 +4,7 @@
 
 GRAM is a simple Java based application which serves _mock_ API end points flexibly defined using a **RESTful interface** or using an integrated **web app**.
 
-The defined mock API end points can be accessed at the same server under the sub-path `/mock/`.
+The defined mock API end points can be accessed at the same server under the sub-path `/mock/`. Some information of requests to each mock end point will be logged (remote IP, query parameters etc.) and can be looked up.
 
 The server does not have backend persistence (yet), which means all configurations get lost upon server shutdown. However the server supports loading data from a JSON configuration file during start-up. The file can be specified using command line parameter `--data`, or simply be named "`data.json`" and put together with the server jar file.
 
@@ -126,6 +126,19 @@ Currently following content types can be used:
   + Response
     - `200 OK` and a list of available content types
 
+### `/config/[id]/request`
+* GET
+  + Parameters
+    - page: default value is 1
+    - pageSize: default value is 5
+  + Response
+    - `200 OK` and an object with following entries
+       - `data` - the request log data of the given page
+       - `totalPages`
+       - `currentPage`
+       - `pageSize`
+       - `totalRecords`
+    - `404 Not Found` if no end point can be found with the given id
 
 ## Get started
 
