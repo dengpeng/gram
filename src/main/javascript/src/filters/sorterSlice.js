@@ -8,7 +8,7 @@ export const sortableFields = {
 
 const sorterInitialState = {
   field: 'path',
-  ascending: false
+  ascending: true
 }
 
 const sorterSlice = createSlice({
