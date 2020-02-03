@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     width: '2px',
     backgroundColor: ({totalPages}) => totalPages > 1 ? theme.palette.secondary.main : 'transparent',
     transition: 'height 0.3s, margin-top 0.3s',
-    height: ({totalPages}) => (1/totalPages) * 200 + 'px',
+    height: ({totalPages}) => Math.max((1/totalPages) * 200, 2) + 'px',
     marginTop: ({currentPage, totalPages}) => {
        return 200 * (currentPage - 1) / totalPages + 'px'
     },

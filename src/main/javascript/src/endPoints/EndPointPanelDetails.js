@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch } from 'react-redux'
 import { loadLogs } from '../requestLogs/requestLogsSlice'
@@ -30,9 +30,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default ({ endPoint }) => {
+export default ({ endPoint, viewReqLogs, setViewReqLogs }) => {
   const classes = useStyles();
-  const [viewReqLogs, setViewReqLogs] = useState(false);
   const dispatch = useDispatch();
 
   const onRefreshLog = () => {

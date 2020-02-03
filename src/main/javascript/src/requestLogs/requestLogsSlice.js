@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getRequestLogs } from '../api'
+import { getRequestLogs, removeRequestLogs } from '../api'
 
 const initialRequestLogsState = {
   logsByEndPoint : {},
@@ -25,6 +25,15 @@ const requestLogsReducer = createSlice({
 
     loadStart (state) {
       state.isLoading = true;
+    },
+
+    clearSuccess (state, { payload: id }) {
+      state.logsByEndPoint[id] = [];
+      state.metaByEndPoint[id] = { totalPages: 0, totalRecords: 0, currentPage: 1, pageSize: 5 }
+    },
+
+    clearFailure (state, { payload }) {
+      state.error = payload;
     }
   }
 });
@@ -32,7 +41,7 @@ const requestLogsReducer = createSlice({
 const { actions, reducer } = requestLogsReducer;
 
 export default reducer;
-export const { loadSuccess, loadFailure, loadStart } = actions;
+export const { loadSuccess, loadFailure, loadStart, clearFailure, clearSuccess } = actions;
 
 export const loadLogs = (id, page, pageSize) => async dispatch => {
   try {
@@ -41,6 +50,20 @@ export const loadLogs = (id, page, pageSize) => async dispatch => {
     dispatch(loadSuccess({ id, ...response }));
   } catch ({ message, response: { status, statusText, data, headers }}) {
     dispatch(loadFailure({
+      error: {
+        message,
+        response: { status, statusText, data, headers }
+      }
+    }));
+  }
+}
+
+export const clearLogs = id => async dispatch => {
+  try {
+    await removeRequestLogs(id);
+    dispatch(clearSuccess(id));
+  } catch ({ message, response: { status, statusText, data, headers }}) {
+    dispatch(clearFailure({
       error: {
         message,
         response: { status, statusText, data, headers }

@@ -163,6 +163,17 @@ public class EndPointController {
     }
   }
 
+  @DeleteMapping("/{id}/request")
+  public ResponseEntity<EndPointRequestData> clearRequestLogsByEndPoint (@PathVariable String id) {
+    Optional<EndPoint> endPoint = endPointService.getById (id);
+    if (endPoint.isPresent()) {
+      EndPoint endPointActual = endPoint.get();
+      endPointActual.getLoggedRequests().clear();
+      return ResponseEntity.ok().build();
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 
   @PutMapping ("/{id}")
   @JsonView(Public.class)

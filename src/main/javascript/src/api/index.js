@@ -82,3 +82,11 @@ export async function getRequestLogs(endPointId, page = 1, pageSize = 5) {
     throw err;
   }
 }
+
+export async function removeRequestLogs(endPointId) {
+  try {
+    await axios.delete(apiRoot + '/' + endPointId + '/request');
+  } catch (err) {
+    throw err;
+  }
+}
