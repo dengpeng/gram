@@ -130,7 +130,7 @@ export default () => {
           </Grid>
           <Grid item xs={4}>
             <TextField id="edit-delay" name="delay" label="Delay" type="number" value={delay} fullWidth onChange={onFieldChange} 
-                       InputProps={{ endAdornment: <InputAdornment position="end">ms</InputAdornment> }} />
+                       InputProps={{ endAdornment: <InputAdornment position="end">ms</InputAdornment>, inputProps: { min: 0 } }} />
           </Grid>
           <Grid item xs={12}>
             <TextField id="edit-response" name="response" label="Response Body" multiline fullWidth 
