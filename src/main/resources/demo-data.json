@@ -1,0 +1,29 @@
+[
+  {
+    "active": true,
+    "path": "html/demo",
+    "response": "<h1>Hello World!</h1>\n<p>This is a demo response of type \"<strong>HTML</strong>\"</p>",
+    "status": "OK",
+    "method": "GET",
+    "delay": 0,
+    "contentType": "text/html"
+  },
+  {
+    "active": true,
+    "path": "post/and/xml",
+    "response": "<?xml version=\"1.0\" ?>\n<Error>\n  <Message>Something is wrong with the request ...</Message>\n</Error>",
+    "status": "BAD_REQUEST",
+    "method": "POST",
+    "delay": 2000,
+    "contentType": "application/xml"
+  },
+  {
+    "active": true,
+    "path": "example.json",
+    "response": "{\n\n  \"message\": \"this is a JSON response\",\n\n  \"with delay\": \"A manual delay can be added\"\n\n}",
+    "status": "OK",
+    "method": "GET",
+    "delay": 600,
+    "contentType": "application/json"
+  }
+]

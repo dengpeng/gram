@@ -1,14 +1,15 @@
 package com.informsoftware.road.mock;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,8 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.system.ApplicationHome;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -35,12 +38,12 @@ public class EndPointService {
   static final String   DEFAULT_DATA_FILE = "data.json";
 
   Map<String, EndPoint> endPointMap       = new ConcurrentHashMap<> ();
-  File                  dataFile;
   ObjectMapper          objectMapper;
 
   @Autowired
   public EndPointService (ApplicationArguments args,
-                          ObjectMapper objectMapper) {
+                          ObjectMapper objectMapper,
+                          @Value ("classpath:demo-data.json") Resource demoDataResource) {
     this.objectMapper = objectMapper;
 
     List<String> dataFiles = args.getOptionValues ("data");
@@ -50,28 +53,36 @@ public class EndPointService {
     }
 
     ApplicationHome home = new ApplicationHome (this.getClass ());
+    File dataFile = new File (home.getDir (), dataFileName);
 
-    dataFile = new File (home.getDir (), dataFileName);
-  }
-
-  @PostConstruct
-  protected void loadDataFromFile () {
     if (dataFile != null && dataFile.exists ()) {
       try {
-        log.info ("Loading data from file " + dataFile.getName ());
-        List<EndPoint> data = objectMapper.readValue (dataFile, new TypeReference<List<EndPoint>> () {
-        });
-        data.stream ().forEach (item -> add (item));
-        log.info (String.format ("%d data items loaded.", data.size ()));
-
-      } catch (JsonParseException | JsonMappingException e) {
-        log.error ("Fail to parse JSON data from file " + dataFile.getName (), e);
-
-      } catch (IOException e) {
-        log.error ("Fail to load data from file " + dataFile.getName (), e);
+        loadData (new FileInputStream (dataFile));
+      } catch (FileNotFoundException e) {
+        log.error ("Cannot find file " + dataFile.getName (), e);
       }
     } else {
-      log.warn ("Data file " + dataFile.getName () + " doesn't exist. No data loaded");
+      log.warn ("[Data] Data file " + dataFile.getName () + " doesn't exist. Demo data will be loaded");
+      try {
+        loadData (demoDataResource.getInputStream ());
+      } catch (IOException e) {
+        log.error ("Fail to load demo data", e);
+      }
+    }
+  }
+
+  private void loadData (InputStream inputStream) {
+    try {
+      List<EndPoint> data = objectMapper.readValue (inputStream, new TypeReference<List<EndPoint>> () {
+      });
+      data.stream ().forEach (item -> add (item));
+      log.info (String.format ("[Data] %d data items loaded.", data.size ()));
+
+    } catch (JsonParseException | JsonMappingException e) {
+      log.error ("Fail to parse JSON data from input stream", e);
+
+    } catch (IOException e) {
+      log.error ("Fail to load data from input stream", e);
     }
   }
 
