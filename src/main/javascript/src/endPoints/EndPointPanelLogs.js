@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   pagerScroll: {
     alignSelf: 'start',
     width: '2px',
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: ({totalPages}) => totalPages > 1 ? theme.palette.secondary.main : 'transparent',
     transition: 'height 0.3s, margin-top 0.3s',
     height: ({totalPages}) => (1/totalPages) * 200 + 'px',
     marginTop: ({currentPage, totalPages}) => {
