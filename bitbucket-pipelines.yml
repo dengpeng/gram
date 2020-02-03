@@ -4,7 +4,7 @@ pipelines:
         name: Build JavaScript
         image: node:latest
         caches: 
-          - npm
+          - node
         script:
           - cd src/main/javascript
           - npm test --watchAll=false
