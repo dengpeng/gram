@@ -75,62 +75,77 @@
           </execution>
         </executions>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<!-- Required: The following will ensure `npm install` is called before anything else during the 'Default Lifecycle' -->
-					<execution>
-						<id>npm install (initialize)</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>initialize</phase>
-						<configuration>
-							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
-							<executable>npm</executable>
-							<arguments>
-								<argument>install</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<!-- Required: This following calls `npm run build` -->
-					<execution>
-						<id>npm run build (compile)</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>build</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<!-- Required: The following will run unit tests. -->
-					<execution>
-						<id>npm run test (test)</id>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>test</phase>
-						<configuration>
-							<skip>${maven.test.skip}</skip>
-							<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
-							<executable>npm</executable>
-							<arguments>
-								<argument>run</argument>
-								<argument>test</argument>
-								<argument>--</argument>
-								<argument>--watchAll=false</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>build-js</id>
+			<activation>
+				<property>
+					<name>buildJS</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<!-- Required: The following will ensure `npm install` is called before anything else during the 'Default Lifecycle' -->
+							<execution>
+								<id>npm install (initialize)</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>initialize</phase>
+								<configuration>
+									<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>install</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<!-- Required: This following calls `npm run build` -->
+							<execution>
+								<id>npm run build (compile)</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>run</argument>
+										<argument>build</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<!-- Required: The following will run unit tests. -->
+							<execution>
+								<id>npm run test (test)</id>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>test</phase>
+								<configuration>
+									<skip>${maven.test.skip}</skip>
+									<workingDirectory>${basedir}/src/main/javascript</workingDirectory>
+									<executable>npm</executable>
+									<arguments>
+										<argument>run</argument>
+										<argument>test</argument>
+										<argument>--</argument>
+										<argument>--watchAll=false</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
