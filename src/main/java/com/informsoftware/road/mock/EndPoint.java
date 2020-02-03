@@ -8,6 +8,9 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.informsoftware.road.mock.JsonViews.Internal;
+import com.informsoftware.road.mock.JsonViews.Public;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,30 +24,38 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 public class EndPoint {
 
-  static final Logger   log = LoggerFactory.getLogger (EndPoint.class);
+  static final Logger           log = LoggerFactory.getLogger (EndPoint.class);
 
-  private String        id;
-  private boolean       active;
+  @JsonView (Public.class)
+  private String                id;
+  @JsonView (Public.class)
+  private boolean               active;
 
-  private String        path;
-  private String        response;
-  private HttpStatus    status;
-  private RequestMethod method;
-  private MediaType     mediaType;
-  private Long          delay;                                         // millisecond
-
+  @JsonView (Public.class)
+  private String                path;
+  @JsonView (Public.class)
+  private String                response;
+  @JsonView (Public.class)
+  private HttpStatus            status;
+  @JsonView (Public.class)
+  private RequestMethod         method;
+  @JsonView (Public.class)
+  private Long                  delay;                                         // millisecond
+  
+  @JsonView (Internal.class)
   private List<EndPointRequest> loggedRequests;
+  
+  private MediaType             mediaType;
 
   public EndPoint () {
-    this.id = UUID.randomUUID ().toString ();
-    loggedRequests = Collections.synchronizedList(new ArrayList<>());
+    loggedRequests = Collections.synchronizedList (new ArrayList<> ());
   }
 
   public EndPoint (String path,
                    String response,
                    HttpStatus status) {
     this ();
-    setPath(path);
+    setPath (path);
     this.response = response;
 
     if (status != null) {
@@ -107,8 +118,8 @@ public class EndPoint {
 
   public void setPath (String path) {
     if (!StringUtils.isEmpty (path)) {
-      if (path.startsWith("/")) {
-        path = path.substring(1);
+      if (path.startsWith ("/")) {
+        path = path.substring (1);
       }
       this.path = path;
     }
@@ -134,6 +145,7 @@ public class EndPoint {
     }
   }
 
+  @JsonView (Public.class)
   public String getContentType () {
     return mediaType == null ? "" : mediaType.toString ();
   }
@@ -153,6 +165,9 @@ public class EndPoint {
   }
 
   public String getId () {
+    if (id == null) {
+      id = UUID.randomUUID ().toString ();
+    }
     return id;
   }
 
@@ -199,22 +214,30 @@ public class EndPoint {
     }
   }
 
-  @JsonIgnore
-  public EndPointRequestData getLoggedRequests (int pageSize, int page) {
+  public List<EndPointRequest> getLoggedRequests () {
+    return loggedRequests;
+  }
+
+  public void setLoggedRequests (List<EndPointRequest> loggedRequests) {
+    this.loggedRequests = loggedRequests;
+  }
+
+  public EndPointRequestData getLoggedRequests (int pageSize,
+                                                int page) {
     int begin = (page - 1) * pageSize;
     int end = page * pageSize;
-    int totalRecords = loggedRequests.size();
-    int totalPages = (int) Math.ceil(totalRecords / Double.valueOf(pageSize));
-    List<EndPointRequest> data = new ArrayList<>();
+    int totalRecords = loggedRequests.size ();
+    int totalPages = (int) Math.ceil (totalRecords / Double.valueOf (pageSize));
+    List<EndPointRequest> data = new ArrayList<> ();
 
     if (begin >= 0 && begin < totalRecords) {
       if (end > totalRecords) {
         end = totalRecords;
       }
-      data.addAll(loggedRequests.subList (begin, end));
+      data.addAll (loggedRequests.subList (begin, end));
     }
 
-    return new EndPointRequestData(data, totalRecords, totalPages, page, pageSize);
+    return new EndPointRequestData (data, totalRecords, totalPages, page, pageSize);
   }
 
   public void logRequest (HttpServletRequest servletRequest) {

@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.informsoftware.road.mock.JsonViews.Internal;
+import com.informsoftware.road.mock.JsonViews.Public;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -76,6 +79,7 @@ public class EndPointController {
   }
 
   @GetMapping
+  @JsonView(Public.class)
   public List<EndPoint> getAll () {
     return endPointService.getAll ();
   }
@@ -87,7 +91,7 @@ public class EndPointController {
     String json = "";
 
     try {
-      json = objectMapper.writerWithDefaultPrettyPrinter ().writeValueAsString (data);
+      json = objectMapper.writerWithDefaultPrettyPrinter ().withView(Internal.class).writeValueAsString (data);
     } catch (Exception e) {
       return ResponseEntity.unprocessableEntity ().body (e.getMessage ());
     }
@@ -96,6 +100,7 @@ public class EndPointController {
   }
 
   @PostMapping
+  @JsonView(Public.class)
   public ResponseEntity<EndPoint> createConfig (@RequestBody (required = false) EndPoint data,
                                                 EndPoint params,
                                                 UriComponentsBuilder ucb) {
@@ -120,6 +125,7 @@ public class EndPointController {
   }
 
   @PutMapping
+  @JsonView(Public.class)
   public ResponseEntity<List<EndPoint>> updateConfig (@RequestBody (required = false) EndPoint data,
                                                       EndPoint params) {
     if (data == null && params == null) {
@@ -134,11 +140,13 @@ public class EndPointController {
   }
 
   @DeleteMapping
+  @JsonView(Public.class)
   public ResponseEntity<EndPoint> removeConfig (@RequestParam String id) {
     return ResponseEntity.of(endPointService.remove (id));
   }
 
   @GetMapping ("/{id}")
+  @JsonView(Public.class)
   public ResponseEntity<EndPoint> getConfigById (@PathVariable String id) {
     return ResponseEntity.of (endPointService.getById (id));
   }
@@ -157,6 +165,7 @@ public class EndPointController {
 
 
   @PutMapping ("/{id}")
+  @JsonView(Public.class)
   public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id,
                                                           @RequestBody EndPoint data) {
     data.setId (id);
@@ -166,6 +175,7 @@ public class EndPointController {
   }
 
   @DeleteMapping ("/{id}")
+  @JsonView(Public.class)
   public ResponseEntity<EndPoint> removeConfigById (@PathVariable String id) {
     return removeConfig(id);
   }

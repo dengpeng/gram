@@ -11,10 +11,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PreDestroy;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.informsoftware.road.mock.JsonViews.Internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +43,22 @@ public class EndPointService {
   Map<String, EndPoint> endPointMap       = new ConcurrentHashMap<> ();
   ObjectMapper          objectMapper;
 
+  boolean               persistData = true;
+
   @Autowired
   public EndPointService (ApplicationArguments args,
                           ObjectMapper objectMapper,
                           @Value ("classpath:demo-data.json") Resource demoDataResource) {
     this.objectMapper = objectMapper;
 
-    List<String> dataFiles = args.getOptionValues ("data");
+    List<String> persistArgs = args.getOptionValues ("persist");
+    if (persistArgs != null && persistArgs.size() > 0 && "FALSE".equals(persistArgs.get(0).toUpperCase())) {
+      log.info("[Data] Persisting turned off");
+      persistData = false;
+    }
+
     String dataFileName = DEFAULT_DATA_FILE;
+    List<String> dataFiles = args.getOptionValues ("data");
     if (dataFiles != null && dataFiles.size () > 0) {
       dataFileName = dataFiles.get (0);
     }
@@ -83,6 +94,37 @@ public class EndPointService {
 
     } catch (IOException e) {
       log.error ("Fail to load data from input stream", e);
+    }
+  }
+
+  @PreDestroy
+  protected void persistData () {
+    if (!persistData) {
+      log.info("[Data] Persisting turned off, no data will be saved.");
+      return;
+    }
+
+    ApplicationHome home = new ApplicationHome (this.getClass ());
+    File dataFile = new File (home.getDir (), DEFAULT_DATA_FILE);
+
+    if (!dataFile.exists()) {
+      try {
+        dataFile.createNewFile ();
+        log.info("File for persisting data created");
+      } catch (IOException e) {
+        log.error("Fail to create file for persisting data", e);
+      }
+    }
+
+    if (dataFile.exists() && dataFile.canWrite()) {
+      try {
+        objectMapper.writerWithDefaultPrettyPrinter ()
+                    .withView (Internal.class)
+                    .writeValue (dataFile, endPointMap.values ());
+        log.info ("[Data] Data persisted into external file");
+      } catch (IOException e) {
+        log.error("IOException while persisting data.");
+      }
     }
   }
 

@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.informsoftware.road.mock.JsonViews.Public;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -21,17 +24,26 @@ public class EndPointRequest {
 
   static final Logger               log = LoggerFactory.getLogger (EndPoint.class);
 
+  @JsonView(Public.class)
   private long                      timeStamp;
+  @JsonView(Public.class)
   private String                    remoteAddress;
+  @JsonView(Public.class)
   private Map<String, List<String>> queryParams; 
+  @JsonView(Public.class)
   private String                    body;
 
+  public EndPointRequest () {
+    queryParams = new HashMap<>();
+  }
+
   public EndPointRequest (HttpServletRequest request) {
+    this ();
+
     timeStamp = System.currentTimeMillis ();
     remoteAddress = request.getRemoteAddr ();
     
     String queryString = request.getQueryString ();
-    queryParams = new HashMap<>();
 
     if (!StringUtils.isEmpty(queryString)) {
       Arrays.stream(queryString.split("&")).forEach(kvp -> {
