@@ -1,14 +1,22 @@
-# This is a sample build configuration for Java (Maven).
-# Check our guides at https://confluence.atlassian.com/x/zd-5Mw for more examples.
-# Only use spaces to indent your .yml configuration.
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: maven:3.6.1
-
 pipelines:
   default:
     - step:
+        name: Build JavaScript
+        image: node:latest
+        caches: 
+          - npm
+        script:
+          - cd src/main/javascript
+          - npm test --watchAll=false
+          - npm run build
+        artifacts:
+          - src/main/javascript/build/**
+    - step:
+        name: Build Java and package all files
+        image: maven:latest
         caches:
           - maven
         script: # Modify the commands below to build your repository.
           - mvn -B package # -B batch mode makes Maven less verbose
+        artifacts:
+          - target/*.jar
