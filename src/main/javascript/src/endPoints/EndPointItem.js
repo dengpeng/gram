@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
     '& .dimmable > *': {
       opacity: ({active}) => active ? 1 : 0.5
     }
+  },
+  actionBar: {
+    paddingLeft: theme.spacing(2)
   }
 }));
 
@@ -51,7 +54,7 @@ export default ({ endPoint }) => {
       <Divider />
       <EndPointPanelDetails endPoint={endPoint} viewReqLogs={viewReqLogs} setViewReqLogs={setViewReqLogs} />
       <Divider />
-      <ExpansionPanelActions>
+      <ExpansionPanelActions className={classes.actionBar}>
         <FormControlLabel control={<Switch checked={active} onChange={onToggle} value="checkedA" color="primary" />} label={active ? 'Active':'Inactive'} />
         <Box flexGrow={1}></Box>
         <ClearLogsButton endPoint={endPoint} viewReqLogs={viewReqLogs} />
