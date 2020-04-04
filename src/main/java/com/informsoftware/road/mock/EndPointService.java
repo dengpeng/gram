@@ -38,12 +38,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class EndPointService {
 
   static final Logger   log               = LoggerFactory.getLogger (EndPointService.class);
+  
   static final String   DEFAULT_DATA_FILE = "data.json";
+  static final String   ARG_PERSIST       = "persist";
+  static final String   ARG_DATA          = "data";
 
   Map<String, EndPoint> endPointMap       = new ConcurrentHashMap<> ();
   ObjectMapper          objectMapper;
 
-  boolean               persistData = true;
+  boolean               persistData       = true;
 
   @Autowired
   public EndPointService (ApplicationArguments args,
@@ -51,15 +54,15 @@ public class EndPointService {
                           @Value ("classpath:demo-data.json") Resource demoDataResource) {
     this.objectMapper = objectMapper;
 
-    List<String> persistArgs = args.getOptionValues ("persist");
-    if (persistArgs != null && persistArgs.size() > 0 && "FALSE".equals(persistArgs.get(0).toUpperCase())) {
-      log.info("[Data] Persisting turned off");
+    List<String> persistArgs = args.getOptionValues (ARG_PERSIST);
+    if (persistArgs != null && !persistArgs.isEmpty () && persistArgs.get (0).toUpperCase ().equals ("FALSE")) {
+      log.info ("[Data] Persisting turned off");
       persistData = false;
     }
 
     String dataFileName = DEFAULT_DATA_FILE;
-    List<String> dataFiles = args.getOptionValues ("data");
-    if (dataFiles != null && dataFiles.size () > 0) {
+    List<String> dataFiles = args.getOptionValues (ARG_DATA);
+    if (dataFiles != null && !dataFiles.isEmpty ()) {
       dataFileName = dataFiles.get (0);
     }
 
@@ -100,30 +103,30 @@ public class EndPointService {
   @PreDestroy
   protected void persistData () {
     if (!persistData) {
-      log.info("[Data] Persisting turned off, no data will be saved.");
+      log.info ("[Data] Persisting turned off, no data will be saved.");
       return;
     }
 
     ApplicationHome home = new ApplicationHome (this.getClass ());
     File dataFile = new File (home.getDir (), DEFAULT_DATA_FILE);
 
-    if (!dataFile.exists()) {
+    if (!dataFile.exists ()) {
       try {
         dataFile.createNewFile ();
-        log.info("File for persisting data created");
+        log.info ("File for persisting data created");
       } catch (IOException e) {
-        log.error("Fail to create file for persisting data", e);
+        log.error ("Fail to create file for persisting data", e);
       }
     }
 
-    if (dataFile.exists() && dataFile.canWrite()) {
+    if (dataFile.exists () && dataFile.canWrite ()) {
       try {
         objectMapper.writerWithDefaultPrettyPrinter ()
                     .withView (Internal.class)
                     .writeValue (dataFile, endPointMap.values ());
         log.info ("[Data] Data persisted into external file");
       } catch (IOException e) {
-        log.error("IOException while persisting data.");
+        log.error ("IOException while persisting data.");
       }
     }
   }
@@ -198,7 +201,7 @@ public class EndPointService {
       item.setDelay (delay);
 
       if (active && !item.isActive ()) {
-        getActiveByPathAndMethod (item.getPath (), item.getMethod()).ifPresent (other -> {
+        getActiveByPathAndMethod (item.getPath (), item.getMethod ()).ifPresent (other -> {
           other.setActive (false);
           endPoints.add (other);
         });
@@ -213,7 +216,7 @@ public class EndPointService {
   }
 
   public Optional<EndPoint> remove (String id) {
-    return Optional.ofNullable(endPointMap.remove (id));
+    return Optional.ofNullable (endPointMap.remove (id));
   }
 
   public List<EndPoint> getAll () {
