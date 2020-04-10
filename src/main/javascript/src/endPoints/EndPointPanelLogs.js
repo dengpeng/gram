@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import dateFormat from 'dateformat'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { loadLogs } from '../requestLogs/requestLogsSlice'
@@ -76,7 +77,7 @@ export default ({endPoint}) => {
     )
   }
 
-  const formatTimeStamp = timestamp => new Date(timestamp).toLocaleString('en', { hour12: false, timeStyle: 'medium', dateStyle: 'medium' });
+  const formatTimeStamp = timestamp => dateFormat(new Date(timestamp), 'yyyy-mm-dd HH:MM:ss.l');
 
   if (selectedIndex >= logs.length) {
     setSelectedIndex(logs.length - 1);
