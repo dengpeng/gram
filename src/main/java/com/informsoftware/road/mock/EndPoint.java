@@ -240,7 +240,9 @@ public class EndPoint {
     return new EndPointRequestData (data, totalRecords, totalPages, page, pageSize);
   }
 
-  public void logRequest (HttpServletRequest servletRequest) {
-    loggedRequests.add (0, new EndPointRequest (servletRequest));
+  public EndPointRequest logRequest (HttpServletRequest servletRequest) {
+    EndPointRequest loggedRequest = new EndPointRequest (servletRequest);
+    loggedRequests.add (0, loggedRequest);
+    return loggedRequest;
   }
 }
