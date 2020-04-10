@@ -4,9 +4,30 @@
 
 GRAM is a simple Java based application which serves _mock_ API end points flexibly defined using a **RESTful interface** or using an integrated **web app**.
 
-The defined mock API end points can be accessed at the same server under the sub-path `/mock/`. Some information of requests to each mock end point will be logged (remote IP, query parameters etc.) and can be looked up.
+The defined mock API end points can be accessed at the same server under the sub-path `/mock/`. Some information of the requests made to each mock end point will be logged (remote IP, query parameters etc.) and can be looked up.
 
 The server does not have backend persistence (yet), which means all configurations get lost upon server shutdown. However the server supports loading data from a JSON configuration file during start-up. The file can be specified using command line parameter `--data`, or simply be named "`data.json`" and put together with the server jar file.
+
+## Get started
+
+1. Start server
+
+       java -jar gram-0.0.1-SNAPSHOT.jar
+
+2. Open browser and go to: http://localhost:9000/ , or interact directly with the REST-interface at http://localhost:9000/config
+
+3. All defined end points can be accessed at http://localhost:9000/mock/*
+
+### Command-Line Parameters
+
+* `--server.port=<port>`
+
+  Server by default starts with port *9000*. Use this parameter to change to other port.
+
+* `--data=<JSON data file>`
+
+  Server by default starts with no end point definition. If a file named `data.json` exists in the same directory the JAR file is executed, or any file specified using `--data`, server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config?download`)
+
 
 ## End Point Definition
 
@@ -18,6 +39,8 @@ Following aspects of an end point can be defined:
 * **Content type** of response (e.g. application/json, text/html)
 * **Response Body**
 * **Delay** (psuedo delay before the response is delivered, in millisecond)
+
+The defined response body can contain SpringEL expressions which will be parsed and evaluated in the web request context, where some attributes like `timeStamp`, `queryParams` and `remoteAddress` are accessible.
 
 Moreover, an end point definition can be toggled active/inactive. Among multiple definitions with the same path/method combination, only one definition can be activated.
 
@@ -140,26 +163,6 @@ Currently following content types can be used:
        - `totalRecords`
     - `404 Not Found` if no end point can be found with the given id
 
-## Get started
-
-1. Start server
-
-       java -jar gram-0.0.1-SNAPSHOT.jar
-
-2. Open browser and go to: http://localhost:9000/ , or interact directly with the REST-interface at http://localhost:9000/config
-
-3. All defined end points can be accessed at http://localhost:9000/mock/*
-
-### Command-Line Parameters
-
-* `--server.port=<port>`
-
-  Server by default starts with port *9000*. Use this parameter to change to other port.
-
-* `--data=<JSON data file>`
-
-  Server by default starts with no end point definition. If a file named `data.json` exists in the same directory the JAR file is executed, or any file specified using `--data`, server will attempt to parse the file content into end point definitions and load them. (File format must be JSON, the content should look similar to the response of GET-request to REST-API `/config?download`)
-
 ## Development
 
 ### Requirements
@@ -173,12 +176,13 @@ Currently following content types can be used:
 ### Dependencies
 
 * Java
-  - `spring-boot`
+  - [spring-boot][6]:
 * JavaScript
-  - `react-js`: view rendering
-  - `redux-toolkit` / `react-redux` state management
-  - `axios`: async communication to backend API
-  - `material-ui`: UI component library
+  - [react-js][1]: view rendering
+  - [redux-toolkit / react-redux][2] state management
+  - [axios][3]: async communication to backend API
+  - [material-ui][4]: UI component library
+  - [dateFormat][5]: for formatting date/time
 
 ## Build
 
@@ -195,3 +199,10 @@ Currently following content types can be used:
       cd src/main/javascript
       npm install (first time)
       npm start
+
+[1]: https://reactjs.org
+[2]: https://redux.js.org
+[3]: https://github.com/axios/axios
+[4]: https://material-ui.com
+[5]: https://github.com/felixge/node-dateformat
+[6]: https://spring.io/projects/spring-boot
