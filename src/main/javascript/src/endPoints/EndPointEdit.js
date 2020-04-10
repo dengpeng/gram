@@ -134,7 +134,7 @@ export default () => {
           </Grid>
           <Grid item xs={12}>
             <TextField id="edit-response" name="response" label="Response Body" multiline fullWidth 
-                       rows="6" value={response} onChange={onFieldChange} 
+                       rows="15" value={response} onChange={onFieldChange} 
                        InputLabelProps={{shrink: true}}
                        InputProps={{ style: { fontFamily: 'Monospace' } }} />
           </Grid>
