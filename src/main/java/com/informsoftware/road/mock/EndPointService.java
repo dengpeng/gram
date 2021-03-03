@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class EndPointService {
 
   static final Logger   log               = LoggerFactory.getLogger (EndPointService.class);
-  
+
   static final String   DEFAULT_DATA_FILE = "data.json";
   static final String   ARG_PERSIST       = "persist";
   static final String   ARG_DATA          = "data";
@@ -69,14 +69,14 @@ public class EndPointService {
     ApplicationHome home = new ApplicationHome (this.getClass ());
     File dataFile = new File (home.getDir (), dataFileName);
 
-    if (dataFile != null && dataFile.exists ()) {
+    if (dataFile.exists ()) {
       try {
         loadData (new FileInputStream (dataFile));
       } catch (FileNotFoundException e) {
         log.error ("Cannot find file " + dataFile.getName (), e);
       }
     } else {
-      log.warn ("[Data] Data file " + dataFile.getName () + " doesn't exist. Demo data will be loaded");
+      log.warn ("[Data] Data file {} doesn't exist. Demo data will be loaded", dataFile.getName ());
       try {
         loadData (demoDataResource.getInputStream ());
       } catch (IOException e) {
@@ -87,10 +87,9 @@ public class EndPointService {
 
   private void loadData (InputStream inputStream) {
     try {
-      List<EndPoint> data = objectMapper.readValue (inputStream, new TypeReference<List<EndPoint>> () {
-      });
+      List<EndPoint> data = objectMapper.readValue (inputStream, new TypeReference<List<EndPoint>> () {});
       data.stream ().forEach (item -> add (item));
-      log.info (String.format ("[Data] %d data items loaded.", data.size ()));
+      log.info ("[Data] {} data items loaded.", data.size ());
 
     } catch (JsonParseException | JsonMappingException e) {
       log.error ("Fail to parse JSON data from input stream", e);
@@ -238,8 +237,8 @@ public class EndPointService {
                                                       RequestMethod method) {
     return endPointMap.values ()
                       .stream ()
-                      .filter (e -> e.isActive () && path != null && path.equals (e.getPath ()) && method != null
-                          && method.equals (e.getMethod ()))
+                      .filter (e -> e.isActive () && path != null && path.equals (e.getPath ()) && method != null &&
+                                    method.equals (e.getMethod ()))
                       .findFirst ();
   }
 }

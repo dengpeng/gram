@@ -79,7 +79,7 @@ public class EndPointController {
   }
 
   @GetMapping
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public List<EndPoint> getAll () {
     return endPointService.getAll ();
   }
@@ -91,7 +91,7 @@ public class EndPointController {
     String json = "";
 
     try {
-      json = objectMapper.writerWithDefaultPrettyPrinter ().withView(Internal.class).writeValueAsString (data);
+      json = objectMapper.writerWithDefaultPrettyPrinter ().withView (Internal.class).writeValueAsString (data);
     } catch (Exception e) {
       return ResponseEntity.unprocessableEntity ().body (e.getMessage ());
     }
@@ -100,7 +100,7 @@ public class EndPointController {
   }
 
   @PostMapping
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<EndPoint> createConfig (@RequestBody (required = false) EndPoint data,
                                                 EndPoint params,
                                                 UriComponentsBuilder ucb) {
@@ -110,7 +110,7 @@ public class EndPointController {
       data = params;
     }
 
-    if (StringUtils.isEmpty (data.getPath ())) {
+    if (!StringUtils.hasText (data.getPath ())) {
       return ResponseEntity.badRequest ().build ();
     }
 
@@ -125,7 +125,7 @@ public class EndPointController {
   }
 
   @PutMapping
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<List<EndPoint>> updateConfig (@RequestBody (required = false) EndPoint data,
                                                       EndPoint params) {
     if (data == null && params == null) {
@@ -140,43 +140,43 @@ public class EndPointController {
   }
 
   @DeleteMapping
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<EndPoint> removeConfig (@RequestParam String id) {
-    return ResponseEntity.of(endPointService.remove (id));
+    return ResponseEntity.of (endPointService.remove (id));
   }
 
   @GetMapping ("/{id}")
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<EndPoint> getConfigById (@PathVariable String id) {
     return ResponseEntity.of (endPointService.getById (id));
   }
 
   @GetMapping ("/{id}/request")
   public ResponseEntity<EndPointRequestData> getRequestLogByEndPoint (@PathVariable String id,
-                                                                        @RequestParam(defaultValue = "5") int pageSize,
-                                                                        @RequestParam(defaultValue = "1") int page) {
+                                                                      @RequestParam (defaultValue = "5") int pageSize,
+                                                                      @RequestParam (defaultValue = "1") int page) {
     Optional<EndPoint> endPoint = endPointService.getById (id);
-    if (endPoint.isPresent()) {
-      return ResponseEntity.ok(endPoint.get().getLoggedRequests(pageSize, page));
+    if (endPoint.isPresent ()) {
+      return ResponseEntity.ok (endPoint.get ().getLoggedRequests (pageSize, page));
     } else {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.notFound ().build ();
     }
   }
 
-  @DeleteMapping("/{id}/request")
+  @DeleteMapping ("/{id}/request")
   public ResponseEntity<EndPointRequestData> clearRequestLogsByEndPoint (@PathVariable String id) {
     Optional<EndPoint> endPoint = endPointService.getById (id);
-    if (endPoint.isPresent()) {
-      EndPoint endPointActual = endPoint.get();
-      endPointActual.getLoggedRequests().clear();
-      return ResponseEntity.ok().build();
+    if (endPoint.isPresent ()) {
+      EndPoint endPointActual = endPoint.get ();
+      endPointActual.getLoggedRequests ().clear ();
+      return ResponseEntity.ok ().build ();
     } else {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.notFound ().build ();
     }
   }
 
   @PutMapping ("/{id}")
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<List<EndPoint>> updateConfigById (@PathVariable String id,
                                                           @RequestBody EndPoint data) {
     data.setId (id);
@@ -186,8 +186,8 @@ public class EndPointController {
   }
 
   @DeleteMapping ("/{id}")
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   public ResponseEntity<EndPoint> removeConfigById (@PathVariable String id) {
-    return removeConfig(id);
+    return removeConfig (id);
   }
 }

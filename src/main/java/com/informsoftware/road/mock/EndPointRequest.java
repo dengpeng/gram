@@ -22,19 +22,19 @@ import org.springframework.util.StringUtils;
  */
 public class EndPointRequest {
 
-  static final Logger               log = LoggerFactory.getLogger (EndPoint.class);
+  static final Logger               log = LoggerFactory.getLogger (EndPointRequest.class);
 
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   private long                      timeStamp;
-  @JsonView(Public.class)
+  @JsonView (Public.class)
   private String                    remoteAddress;
-  @JsonView(Public.class)
-  private Map<String, List<String>> queryParams; 
-  @JsonView(Public.class)
+  @JsonView (Public.class)
+  private Map<String, List<String>> queryParams;
+  @JsonView (Public.class)
   private String                    body;
 
   public EndPointRequest () {
-    queryParams = new HashMap<>();
+    queryParams = new HashMap<> ();
   }
 
   public EndPointRequest (HttpServletRequest request) {
@@ -42,19 +42,19 @@ public class EndPointRequest {
 
     timeStamp = System.currentTimeMillis ();
     remoteAddress = request.getRemoteAddr ();
-    
+
     String queryString = request.getQueryString ();
 
-    if (!StringUtils.isEmpty(queryString)) {
-      Arrays.stream(queryString.split("&")).forEach(kvp -> {
+    if (StringUtils.hasText (queryString)) {
+      Arrays.stream (queryString.split ("&")).forEach (kvp -> {
         String[] keyValue = kvp.split ("=");
         if (keyValue.length > 0) {
           String key = keyValue[0];
-          if (!queryParams.containsKey(key)) {
-            queryParams.put(key, new ArrayList<>());
+          if (!queryParams.containsKey (key)) {
+            queryParams.put (key, new ArrayList<> ());
           }
           if (keyValue.length > 1) {
-            queryParams.get(key).add(keyValue[1]);
+            queryParams.get (key).add (keyValue[1]);
           }
         }
       });
@@ -63,10 +63,10 @@ public class EndPointRequest {
     try {
       body = request.getReader ().lines ().collect (Collectors.joining (System.lineSeparator ()));
     } catch (IOException e) {
-      log.error("IOException while reading request body", e);
+      log.error ("IOException while reading request body", e);
     }
   }
-  
+
   public long getTimeStamp () {
     return timeStamp;
   }
@@ -82,7 +82,7 @@ public class EndPointRequest {
   public void setRemoteAddress (String remoteAddress) {
     this.remoteAddress = remoteAddress;
   }
-  
+
   public String getBody () {
     return body;
   }

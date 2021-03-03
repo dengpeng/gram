@@ -41,10 +41,10 @@ public class EndPoint {
   private RequestMethod         method;
   @JsonView (Public.class)
   private Long                  delay;                                         // millisecond
-  
+
   @JsonView (Internal.class)
   private List<EndPointRequest> loggedRequests;
-  
+
   private MediaType             mediaType;
 
   public EndPoint () {
@@ -92,8 +92,8 @@ public class EndPoint {
                    MediaType mediaType) {
     this (path, response, status, method);
 
-    if (method != null) {
-      this.method = method;
+    if (mediaType != null) {
+      this.mediaType = mediaType;
     }
   }
 
@@ -117,7 +117,7 @@ public class EndPoint {
   }
 
   public void setPath (String path) {
-    if (!StringUtils.isEmpty (path)) {
+    if (StringUtils.hasText (path)) {
       if (path.startsWith ("/")) {
         path = path.substring (1);
       }
@@ -151,16 +151,16 @@ public class EndPoint {
   }
 
   public void setContentType (String contentType) {
-    MediaType mediaType = null;
+    MediaType parsedMediaType = null;
 
     try {
-      mediaType = MediaType.parseMediaType (contentType);
+      parsedMediaType = MediaType.parseMediaType (contentType);
     } catch (IllegalArgumentException e) {
       log.error ("Cannot parse content type", e);
     }
 
-    if (mediaType != null) {
-      setMediaType (mediaType);
+    if (parsedMediaType != null) {
+      setMediaType (parsedMediaType);
     }
   }
 
