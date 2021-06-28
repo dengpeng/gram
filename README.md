@@ -14,6 +14,10 @@ The server does not have backend persistence (yet), which means all configuratio
 
        java -jar gram-0.0.1-SNAPSHOT.jar
 
+   or if use native image
+
+       . /gram 
+
 2. Open browser and go to: http://localhost:9000/ , or interact directly with the REST-interface at http://localhost:9000/config
 
 3. All defined end points can be accessed at http://localhost:9000/mock/*
@@ -186,7 +190,13 @@ Currently following content types can be used:
 
 ## Build
 
+### Build Java Jar pacakge
+
     mvn package
+
+### Build GraalVM Native Image
+
+    mvn -Pnative -DskipTests pacakge
 
 ## Dev-Server
 
